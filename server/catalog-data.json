@@ -1,0 +1,1861 @@
+[
+  {
+    "id": "netflix",
+    "name": "Netflix",
+    "category": "Entertainment",
+    "domain": "netflix.com",
+    "aliases": [
+      "netflix"
+    ],
+    "logo": "/logos/netflix.svg",
+    "logoSource": "https://brand.netflix.com/en/assets/logos",
+    "color": "#E50914",
+    "url": "https://netflix.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "spotify",
+    "name": "Spotify Premium",
+    "category": "Entertainment",
+    "domain": "spotify.com",
+    "aliases": [
+      "spotify"
+    ],
+    "logo": "/logos/spotify.svg",
+    "logoSource": "https://developer.spotify.com/documentation/general/design-and-branding/#using-our-logo",
+    "color": "#1ED760",
+    "url": "https://spotify.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "youtube",
+    "name": "YouTube Premium",
+    "category": "Entertainment",
+    "domain": "youtube.com",
+    "aliases": [
+      "youtube premium",
+      "youtube"
+    ],
+    "logo": "/logos/youtube.svg",
+    "logoSource": "https://www.youtube.com/howyoutubeworks/resources/brand-resources/#logos-icons-and-colors",
+    "color": "#FF0000",
+    "url": "https://youtube.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "youtubemusic",
+    "name": "YouTube Music",
+    "category": "Entertainment",
+    "domain": "music.youtube.com",
+    "aliases": [
+      "youtube music"
+    ],
+    "logo": "/logos/youtubemusic.svg",
+    "logoSource": "https://partnermarketinghub.withgoogle.com/#/brands",
+    "color": "#FF0000",
+    "url": "https://music.youtube.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "jio",
+    "name": "JioHotstar",
+    "category": "Entertainment",
+    "domain": "hotstar.com",
+    "aliases": [
+      "jiohotstar",
+      "hotstar"
+    ],
+    "logo": "/logos/jio.png",
+    "logoSource": "https://hotstar.com",
+    "color": "#ffffff",
+    "url": "https://hotstar.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "prime",
+    "name": "Amazon Prime",
+    "category": "Shopping",
+    "domain": "amazon.in",
+    "aliases": [
+      "amazon prime",
+      "amazonprime"
+    ],
+    "logo": "/logos/prime.png",
+    "logoSource": "https://amazon.in",
+    "color": "#ffffff",
+    "url": "https://amazon.in",
+    "description": "Shopping service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "primevideo",
+    "name": "Prime Video",
+    "category": "Entertainment",
+    "domain": "primevideo.com",
+    "aliases": [
+      "prime video",
+      "primevideo"
+    ],
+    "logo": "/logos/primevideo.png",
+    "logoSource": "https://primevideo.com",
+    "color": "#ffffff",
+    "url": "https://primevideo.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "zee5",
+    "name": "ZEE5",
+    "category": "Entertainment",
+    "domain": "zee5.com",
+    "aliases": [
+      "zee5"
+    ],
+    "logo": "/logos/zee5.png",
+    "logoSource": "https://zee5.com",
+    "color": "#ffffff",
+    "url": "https://zee5.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "sonyliv",
+    "name": "Sony LIV",
+    "category": "Entertainment",
+    "domain": "sonyliv.com",
+    "aliases": [
+      "sonyliv",
+      "sony liv"
+    ],
+    "logo": "/logos/sonyliv.png",
+    "logoSource": "https://sonyliv.com",
+    "color": "#ffffff",
+    "url": "https://sonyliv.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "appletv",
+    "name": "Apple TV",
+    "category": "Entertainment",
+    "domain": "tv.apple.com",
+    "aliases": [
+      "apple tv",
+      "apple.com/tv",
+      "apple tv+"
+    ],
+    "logo": "/logos/appletv.svg",
+    "logoSource": "https://en.wikipedia.org/wiki/File:Apple_TV_(logo).svg",
+    "color": "#000000",
+    "url": "https://tv.apple.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "applemusic",
+    "name": "Apple Music",
+    "category": "Entertainment",
+    "domain": "music.apple.com",
+    "aliases": [
+      "apple music"
+    ],
+    "logo": "/logos/applemusic.svg",
+    "logoSource": "https://www.apple.com/itunes/marketing-on-music/identity-guidelines.html#apple-music-icon",
+    "color": "#FA243C",
+    "url": "https://music.apple.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "applearcade",
+    "name": "Apple Arcade",
+    "category": "Entertainment",
+    "domain": "apple.com",
+    "aliases": [
+      "apple arcade"
+    ],
+    "logo": "/logos/applearcade.svg",
+    "logoSource": "https://www.apple.com/apple-arcade",
+    "color": "#000000",
+    "url": "https://apple.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "appleone",
+    "name": "Apple One",
+    "category": "Entertainment",
+    "domain": "apple.com",
+    "aliases": [
+      "apple one"
+    ],
+    "logo": "/logos/appleone.svg",
+    "logoSource": "https://www.apple.com",
+    "color": "#000000",
+    "url": "https://apple.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "audible",
+    "name": "Audible",
+    "category": "Entertainment",
+    "domain": "audible.in",
+    "aliases": [
+      "audible"
+    ],
+    "logo": "/logos/audible.svg",
+    "logoSource": "https://commons.wikimedia.org/wiki/File:Audible_logo.svg",
+    "color": "#F8991C",
+    "url": "https://audible.in",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "crunchyroll",
+    "name": "Crunchyroll",
+    "category": "Entertainment",
+    "domain": "crunchyroll.com",
+    "aliases": [
+      "crunchyroll"
+    ],
+    "logo": "/logos/crunchyroll.svg",
+    "logoSource": "https://www.crunchyroll.com",
+    "color": "#FF5E00",
+    "url": "https://crunchyroll.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "mubi",
+    "name": "MUBI",
+    "category": "Entertainment",
+    "domain": "mubi.com",
+    "aliases": [
+      "mubi"
+    ],
+    "logo": "/logos/mubi.png",
+    "logoSource": "https://mubi.com",
+    "color": "#ffffff",
+    "url": "https://mubi.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "lionsgate",
+    "name": "Lionsgate Play",
+    "category": "Entertainment",
+    "domain": "lionsgateplay.com",
+    "aliases": [
+      "lionsgate play",
+      "lionsgateplay"
+    ],
+    "logo": "/logos/lionsgate.png",
+    "logoSource": "https://lionsgateplay.com",
+    "color": "#ffffff",
+    "url": "https://lionsgateplay.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "sunNXT",
+    "name": "Sun NXT",
+    "category": "Entertainment",
+    "domain": "sunnxt.com",
+    "aliases": [
+      "sun nxt",
+      "sunnxt"
+    ],
+    "logo": "/logos/sunNXT.png",
+    "logoSource": "https://sunnxt.com",
+    "color": "#ffffff",
+    "url": "https://sunnxt.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "aha",
+    "name": "aha",
+    "category": "Entertainment",
+    "domain": "aha.video",
+    "aliases": [
+      "aha video",
+      "aha.video"
+    ],
+    "logo": "/logos/aha.png",
+    "logoSource": "https://aha.video",
+    "color": "#ffffff",
+    "url": "https://aha.video",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "erosnow",
+    "name": "Eros Now",
+    "category": "Entertainment",
+    "domain": "erosnow.com",
+    "aliases": [
+      "eros now",
+      "erosnow"
+    ],
+    "logo": "/logos/erosnow.png",
+    "logoSource": "https://erosnow.com",
+    "color": "#ffffff",
+    "url": "https://erosnow.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "jiosaavn",
+    "name": "JioSaavn",
+    "category": "Entertainment",
+    "domain": "jiosaavn.com",
+    "aliases": [
+      "jiosaavn"
+    ],
+    "logo": "/logos/jiosaavn.png",
+    "logoSource": "https://jiosaavn.com",
+    "color": "#ffffff",
+    "url": "https://jiosaavn.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "gaana",
+    "name": "Gaana",
+    "category": "Entertainment",
+    "domain": "gaana.com",
+    "aliases": [
+      "gaana"
+    ],
+    "logo": "/logos/gaana.png",
+    "logoSource": "https://gaana.com",
+    "color": "#ffffff",
+    "url": "https://gaana.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "hungama",
+    "name": "Hungama",
+    "category": "Entertainment",
+    "domain": "hungama.com",
+    "aliases": [
+      "hungama"
+    ],
+    "logo": "/logos/hungama.png",
+    "logoSource": "https://hungama.com",
+    "color": "#ffffff",
+    "url": "https://hungama.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "pocketfm",
+    "name": "Pocket FM",
+    "category": "Entertainment",
+    "domain": "pocketfm.com",
+    "aliases": [
+      "pocket fm",
+      "pocketfm"
+    ],
+    "logo": "/logos/pocketfm.png",
+    "logoSource": "https://pocketfm.com",
+    "color": "#ffffff",
+    "url": "https://pocketfm.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "storytel",
+    "name": "Storytel",
+    "category": "Entertainment",
+    "domain": "storytel.com",
+    "aliases": [
+      "storytel"
+    ],
+    "logo": "/logos/storytel.png",
+    "logoSource": "https://storytel.com",
+    "color": "#ffffff",
+    "url": "https://storytel.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "twitch",
+    "name": "Twitch",
+    "category": "Entertainment",
+    "domain": "twitch.tv",
+    "aliases": [
+      "twitch"
+    ],
+    "logo": "/logos/twitch.svg",
+    "logoSource": "https://brand.twitch.tv",
+    "color": "#9146FF",
+    "url": "https://twitch.tv",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "discord",
+    "name": "Discord Nitro",
+    "category": "Entertainment",
+    "domain": "discord.com",
+    "aliases": [
+      "discord nitro",
+      "discord"
+    ],
+    "logo": "/logos/discord.svg",
+    "logoSource": "https://discord.com/branding",
+    "color": "#5865F2",
+    "url": "https://discord.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "patreon",
+    "name": "Patreon",
+    "category": "Entertainment",
+    "domain": "patreon.com",
+    "aliases": [
+      "patreon"
+    ],
+    "logo": "/logos/patreon.svg",
+    "logoSource": "https://www.patreon.com/brand",
+    "color": "#000000",
+    "url": "https://patreon.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "icloud",
+    "name": "iCloud+",
+    "category": "Storage",
+    "domain": "icloud.com",
+    "aliases": [
+      "icloud"
+    ],
+    "logo": "/logos/icloud.svg",
+    "logoSource": "https://commons.wikimedia.org/wiki/File:ICloud_logo.svg",
+    "color": "#3693F3",
+    "url": "https://icloud.com",
+    "description": "Storage service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "google",
+    "name": "Google One",
+    "category": "Storage",
+    "domain": "one.google.com",
+    "aliases": [
+      "google one",
+      "googleone"
+    ],
+    "logo": "/logos/google.png",
+    "logoSource": "https://one.google.com",
+    "color": "#ffffff",
+    "url": "https://one.google.com",
+    "description": "Storage service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "dropbox",
+    "name": "Dropbox",
+    "category": "Storage",
+    "domain": "dropbox.com",
+    "aliases": [
+      "dropbox"
+    ],
+    "logo": "/logos/dropbox.svg",
+    "logoSource": "https://www.dropbox.com/branding",
+    "color": "#0061FF",
+    "url": "https://dropbox.com",
+    "description": "Storage service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "protondrive",
+    "name": "Proton Drive",
+    "category": "Storage",
+    "domain": "proton.me",
+    "aliases": [
+      "proton drive"
+    ],
+    "logo": "/logos/protondrive.svg",
+    "logoSource": "https://proton.me/media/kit",
+    "color": "#EB508D",
+    "url": "https://proton.me",
+    "description": "Storage service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "microsoft365",
+    "name": "Microsoft 365",
+    "category": "Productivity",
+    "domain": "microsoft.com",
+    "aliases": [
+      "microsoft 365",
+      "ms365",
+      "office 365"
+    ],
+    "logo": "/logos/microsoft365.png",
+    "logoSource": "https://microsoft.com",
+    "color": "#ffffff",
+    "url": "https://microsoft.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "notion",
+    "name": "Notion",
+    "category": "Productivity",
+    "domain": "notion.so",
+    "aliases": [
+      "notion"
+    ],
+    "logo": "/logos/notion.svg",
+    "logoSource": "https://www.notion.so",
+    "color": "#000000",
+    "url": "https://notion.so",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "adobe",
+    "name": "Adobe Creative Cloud",
+    "category": "Productivity",
+    "domain": "adobe.com",
+    "aliases": [
+      "adobe creative",
+      "adobe"
+    ],
+    "logo": "/logos/adobe.png",
+    "logoSource": "https://adobe.com",
+    "color": "#ffffff",
+    "url": "https://adobe.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "canva",
+    "name": "Canva Pro",
+    "category": "Productivity",
+    "domain": "canva.com",
+    "aliases": [
+      "canva"
+    ],
+    "logo": "/logos/canva.png",
+    "logoSource": "https://canva.com",
+    "color": "#ffffff",
+    "url": "https://canva.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "figma",
+    "name": "Figma",
+    "category": "Productivity",
+    "domain": "figma.com",
+    "aliases": [
+      "figma"
+    ],
+    "logo": "/logos/figma.svg",
+    "logoSource": "https://www.figma.com/using-the-figma-brand/",
+    "color": "#F24E1E",
+    "url": "https://figma.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "grammarly",
+    "name": "Grammarly",
+    "category": "Productivity",
+    "domain": "grammarly.com",
+    "aliases": [
+      "grammarly"
+    ],
+    "logo": "/logos/grammarly.svg",
+    "logoSource": "https://www.grammarly.com/media-assets",
+    "color": "#027E6F",
+    "url": "https://grammarly.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "evernote",
+    "name": "Evernote",
+    "category": "Productivity",
+    "domain": "evernote.com",
+    "aliases": [
+      "evernote"
+    ],
+    "logo": "/logos/evernote.svg",
+    "logoSource": "https://evernote.com/about-us",
+    "color": "#00A82D",
+    "url": "https://evernote.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "todoist",
+    "name": "Todoist",
+    "category": "Productivity",
+    "domain": "todoist.com",
+    "aliases": [
+      "todoist"
+    ],
+    "logo": "/logos/todoist.svg",
+    "logoSource": "https://doist.com/press",
+    "color": "#E44332",
+    "url": "https://todoist.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "ticktick",
+    "name": "TickTick",
+    "category": "Productivity",
+    "domain": "ticktick.com",
+    "aliases": [
+      "ticktick"
+    ],
+    "logo": "/logos/ticktick.svg",
+    "logoSource": "https://ticktick.com",
+    "color": "#4772FA",
+    "url": "https://ticktick.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "zoom",
+    "name": "Zoom Workplace",
+    "category": "Productivity",
+    "domain": "zoom.us",
+    "aliases": [
+      "zoom.us",
+      "zoom workplace",
+      "zoom"
+    ],
+    "logo": "/logos/zoom.svg",
+    "logoSource": "https://brand.zoom.us/media-library/",
+    "color": "#0B5CFF",
+    "url": "https://zoom.us",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "googleworkspace",
+    "name": "Google Workspace",
+    "category": "Productivity",
+    "domain": "workspace.google.com",
+    "aliases": [
+      "google workspace",
+      "gsuite",
+      "g suite"
+    ],
+    "logo": "/logos/googleworkspace.png",
+    "logoSource": "https://workspace.google.com",
+    "color": "#ffffff",
+    "url": "https://workspace.google.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "slack",
+    "name": "Slack",
+    "category": "Productivity",
+    "domain": "slack.com",
+    "aliases": [
+      "slack"
+    ],
+    "logo": "/logos/slack.png",
+    "logoSource": "https://slack.com",
+    "color": "#ffffff",
+    "url": "https://slack.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "chatgpt",
+    "name": "ChatGPT",
+    "category": "AI & Development",
+    "domain": "chatgpt.com",
+    "aliases": [
+      "chatgpt",
+      "openai"
+    ],
+    "logo": "/logos/chatgpt.png",
+    "logoSource": "https://chatgpt.com",
+    "color": "#ffffff",
+    "url": "https://chatgpt.com",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "claude",
+    "name": "Claude",
+    "category": "AI & Development",
+    "domain": "claude.ai",
+    "aliases": [
+      "claude",
+      "anthropic"
+    ],
+    "logo": "/logos/claude.svg",
+    "logoSource": "https://claude.ai",
+    "color": "#D97757",
+    "url": "https://claude.ai",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "perplexity",
+    "name": "Perplexity",
+    "category": "AI & Development",
+    "domain": "perplexity.ai",
+    "aliases": [
+      "perplexity"
+    ],
+    "logo": "/logos/perplexity.svg",
+    "logoSource": "https://www.perplexity.ai",
+    "color": "#1FB8CD",
+    "url": "https://perplexity.ai",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "gemini",
+    "name": "Google AI Pro",
+    "category": "AI & Development",
+    "domain": "gemini.google.com",
+    "aliases": [
+      "google ai pro",
+      "gemini advanced"
+    ],
+    "logo": "/logos/gemini.png",
+    "logoSource": "https://gemini.google.com",
+    "color": "#ffffff",
+    "url": "https://gemini.google.com",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "cursor",
+    "name": "Cursor",
+    "category": "AI & Development",
+    "domain": "cursor.com",
+    "aliases": [
+      "cursor"
+    ],
+    "logo": "/logos/cursor.svg",
+    "logoSource": "https://cursor.com/brand",
+    "color": "#000000",
+    "url": "https://cursor.com",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "github",
+    "name": "GitHub Copilot",
+    "category": "AI & Development",
+    "domain": "github.com",
+    "aliases": [
+      "github copilot",
+      "github"
+    ],
+    "logo": "/logos/github.svg",
+    "logoSource": "https://primer.style/foundations/icons/copilot-24",
+    "color": "#000000",
+    "url": "https://github.com",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "replit",
+    "name": "Replit",
+    "category": "AI & Development",
+    "domain": "replit.com",
+    "aliases": [
+      "replit"
+    ],
+    "logo": "/logos/replit.svg",
+    "logoSource": "https://repl.it",
+    "color": "#F26207",
+    "url": "https://replit.com",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "vercel",
+    "name": "Vercel",
+    "category": "AI & Development",
+    "domain": "vercel.com",
+    "aliases": [
+      "vercel"
+    ],
+    "logo": "/logos/vercel.svg",
+    "logoSource": "https://vercel.com/geist/brands",
+    "color": "#000000",
+    "url": "https://vercel.com",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "digitalocean",
+    "name": "DigitalOcean",
+    "category": "AI & Development",
+    "domain": "digitalocean.com",
+    "aliases": [
+      "digitalocean"
+    ],
+    "logo": "/logos/digitalocean.svg",
+    "logoSource": "https://www.digitalocean.com/press/",
+    "color": "#0080FF",
+    "url": "https://digitalocean.com",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "duolingo",
+    "name": "Super Duolingo",
+    "category": "Learning",
+    "domain": "duolingo.com",
+    "aliases": [
+      "duolingo"
+    ],
+    "logo": "/logos/duolingo.svg",
+    "logoSource": "https://design.duolingo.com",
+    "color": "#58CC02",
+    "url": "https://duolingo.com",
+    "description": "Learning service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "coursera",
+    "name": "Coursera Plus",
+    "category": "Learning",
+    "domain": "coursera.org",
+    "aliases": [
+      "coursera"
+    ],
+    "logo": "/logos/coursera.svg",
+    "logoSource": "https://about.coursera.org/press",
+    "color": "#0056D2",
+    "url": "https://coursera.org",
+    "description": "Learning service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "udemy",
+    "name": "Udemy Personal Plan",
+    "category": "Learning",
+    "domain": "udemy.com",
+    "aliases": [
+      "udemy"
+    ],
+    "logo": "/logos/udemy.svg",
+    "logoSource": "https://udemy.com",
+    "color": "#A435F0",
+    "url": "https://udemy.com",
+    "description": "Learning service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "skillshare",
+    "name": "Skillshare",
+    "category": "Learning",
+    "domain": "skillshare.com",
+    "aliases": [
+      "skillshare"
+    ],
+    "logo": "/logos/skillshare.svg",
+    "logoSource": "https://www.skillshare.com",
+    "color": "#00FF84",
+    "url": "https://skillshare.com",
+    "description": "Learning service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "linkedin",
+    "name": "LinkedIn Premium",
+    "category": "Learning",
+    "domain": "linkedin.com",
+    "aliases": [
+      "linkedin"
+    ],
+    "logo": "/logos/linkedin.png",
+    "logoSource": "https://linkedin.com",
+    "color": "#ffffff",
+    "url": "https://linkedin.com",
+    "description": "Learning service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "chess",
+    "name": "Chess.com",
+    "category": "Learning",
+    "domain": "chess.com",
+    "aliases": [
+      "chess.com"
+    ],
+    "logo": "/logos/chess.svg",
+    "logoSource": "https://www.chess.com/article/view/chess-com-brand-resources",
+    "color": "#81B64C",
+    "url": "https://chess.com",
+    "description": "Learning service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "headspace",
+    "name": "Headspace",
+    "category": "Health",
+    "domain": "headspace.com",
+    "aliases": [
+      "headspace"
+    ],
+    "logo": "/logos/headspace.svg",
+    "logoSource": "https://www.headspace.com/press-and-media",
+    "color": "#F47D31",
+    "url": "https://headspace.com",
+    "description": "Health service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "calm",
+    "name": "Calm",
+    "category": "Health",
+    "domain": "calm.com",
+    "aliases": [
+      "calm.com",
+      "calm premium"
+    ],
+    "logo": "/logos/calm.png",
+    "logoSource": "https://calm.com",
+    "color": "#ffffff",
+    "url": "https://calm.com",
+    "description": "Health service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "strava",
+    "name": "Strava",
+    "category": "Health",
+    "domain": "strava.com",
+    "aliases": [
+      "strava"
+    ],
+    "logo": "/logos/strava.svg",
+    "logoSource": "https://itunes.apple.com/us/app/strava-running-and-cycling-gps/id426826309",
+    "color": "#FC4C02",
+    "url": "https://strava.com",
+    "description": "Health service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "fitbit",
+    "name": "Fitbit Premium",
+    "category": "Health",
+    "domain": "fitbit.com",
+    "aliases": [
+      "fitbit"
+    ],
+    "logo": "/logos/fitbit.svg",
+    "logoSource": "https://www.fitbit.com/uk/home",
+    "color": "#00B0B9",
+    "url": "https://fitbit.com",
+    "description": "Health service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "cultfit",
+    "name": "cult.fit",
+    "category": "Health",
+    "domain": "cult.fit",
+    "aliases": [
+      "cult.fit",
+      "cultfit"
+    ],
+    "logo": "/logos/cultfit.png",
+    "logoSource": "https://cult.fit",
+    "color": "#ffffff",
+    "url": "https://cult.fit",
+    "description": "Health service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "healthify",
+    "name": "Healthify",
+    "category": "Health",
+    "domain": "healthifyme.com",
+    "aliases": [
+      "healthifyme",
+      "healthify"
+    ],
+    "logo": "/logos/healthify.png",
+    "logoSource": "https://healthifyme.com",
+    "color": "#ffffff",
+    "url": "https://healthifyme.com",
+    "description": "Health service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "swiggy",
+    "name": "Swiggy One",
+    "category": "Shopping",
+    "domain": "swiggy.com",
+    "aliases": [
+      "swiggy one"
+    ],
+    "logo": "/logos/swiggy.svg",
+    "logoSource": "https://www.swiggy.com",
+    "color": "#FC8019",
+    "url": "https://swiggy.com",
+    "description": "Shopping service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "zomato",
+    "name": "Zomato Gold",
+    "category": "Shopping",
+    "domain": "zomato.com",
+    "aliases": [
+      "zomato gold"
+    ],
+    "logo": "/logos/zomato.svg",
+    "logoSource": "https://www.zomato.com/business/apps",
+    "color": "#E23744",
+    "url": "https://zomato.com",
+    "description": "Shopping service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "timesprime",
+    "name": "Times Prime",
+    "category": "Shopping",
+    "domain": "timesprime.com",
+    "aliases": [
+      "times prime",
+      "timesprime"
+    ],
+    "logo": "/logos/timesprime.png",
+    "logoSource": "https://timesprime.com",
+    "color": "#ffffff",
+    "url": "https://timesprime.com",
+    "description": "Shopping service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "nordvpn",
+    "name": "NordVPN",
+    "category": "Security",
+    "domain": "nordvpn.com",
+    "aliases": [
+      "nordvpn"
+    ],
+    "logo": "/logos/nordvpn.svg",
+    "logoSource": "https://nordvpn.com/press-area/",
+    "color": "#4687FF",
+    "url": "https://nordvpn.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "expressvpn",
+    "name": "ExpressVPN",
+    "category": "Security",
+    "domain": "expressvpn.com",
+    "aliases": [
+      "expressvpn"
+    ],
+    "logo": "/logos/expressvpn.svg",
+    "logoSource": "https://www.expressvpn.com/press",
+    "color": "#DA3940",
+    "url": "https://expressvpn.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "surfshark",
+    "name": "Surfshark",
+    "category": "Security",
+    "domain": "surfshark.com",
+    "aliases": [
+      "surfshark"
+    ],
+    "logo": "/logos/surfshark.svg",
+    "logoSource": "https://surfshark.com/press/assets",
+    "color": "#1EBFBF",
+    "url": "https://surfshark.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "protonvpn",
+    "name": "Proton VPN",
+    "category": "Security",
+    "domain": "protonvpn.com",
+    "aliases": [
+      "protonvpn",
+      "proton vpn"
+    ],
+    "logo": "/logos/protonvpn.svg",
+    "logoSource": "https://proton.me/media/kit",
+    "color": "#66DEB1",
+    "url": "https://protonvpn.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "1password",
+    "name": "1Password",
+    "category": "Security",
+    "domain": "1password.com",
+    "aliases": [
+      "1password"
+    ],
+    "logo": "/logos/1password.svg",
+    "logoSource": "https://1password.com/press",
+    "color": "#145FE4",
+    "url": "https://1password.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "bitwarden",
+    "name": "Bitwarden",
+    "category": "Security",
+    "domain": "bitwarden.com",
+    "aliases": [
+      "bitwarden"
+    ],
+    "logo": "/logos/bitwarden.svg",
+    "logoSource": "https://bitwarden.com/brand",
+    "color": "#175DDC",
+    "url": "https://bitwarden.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "dashlane",
+    "name": "Dashlane",
+    "category": "Security",
+    "domain": "dashlane.com",
+    "aliases": [
+      "dashlane"
+    ],
+    "logo": "/logos/dashlane.svg",
+    "logoSource": "https://brandfolder.com/dashlane/brandkitpartners",
+    "color": "#0E353D",
+    "url": "https://dashlane.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "lastpass",
+    "name": "LastPass",
+    "category": "Security",
+    "domain": "lastpass.com",
+    "aliases": [
+      "lastpass"
+    ],
+    "logo": "/logos/lastpass.svg",
+    "logoSource": "https://lastpass.com/press-room/",
+    "color": "#D32D27",
+    "url": "https://lastpass.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "medium",
+    "name": "Medium",
+    "category": "News & Reading",
+    "domain": "medium.com",
+    "aliases": [
+      "medium.com",
+      "medium membership"
+    ],
+    "logo": "/logos/medium.svg",
+    "logoSource": "https://medium.design/logos-and-brand-guidelines-f1a01a733592",
+    "color": "#000000",
+    "url": "https://medium.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "substack",
+    "name": "Substack",
+    "category": "News & Reading",
+    "domain": "substack.com",
+    "aliases": [
+      "substack"
+    ],
+    "logo": "/logos/substack.svg",
+    "logoSource": "https://on.substack.com",
+    "color": "#FF6719",
+    "url": "https://substack.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "nytimes",
+    "name": "The New York Times",
+    "category": "News & Reading",
+    "domain": "nytimes.com",
+    "aliases": [
+      "nytimes",
+      "new york times"
+    ],
+    "logo": "/logos/nytimes.svg",
+    "logoSource": "https://www.nytimes.com",
+    "color": "#000000",
+    "url": "https://nytimes.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "economist",
+    "name": "The Economist",
+    "category": "News & Reading",
+    "domain": "economist.com",
+    "aliases": [
+      "economist"
+    ],
+    "logo": "/logos/economist.png",
+    "logoSource": "https://economist.com",
+    "color": "#ffffff",
+    "url": "https://economist.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "thehindu",
+    "name": "The Hindu",
+    "category": "News & Reading",
+    "domain": "thehindu.com",
+    "aliases": [
+      "the hindu",
+      "thehindu"
+    ],
+    "logo": "/logos/thehindu.png",
+    "logoSource": "https://thehindu.com",
+    "color": "#ffffff",
+    "url": "https://thehindu.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "indianexpress",
+    "name": "The Indian Express",
+    "category": "News & Reading",
+    "domain": "indianexpress.com",
+    "aliases": [
+      "indian express",
+      "indianexpress"
+    ],
+    "logo": "/logos/indianexpress.png",
+    "logoSource": "https://indianexpress.com",
+    "color": "#ffffff",
+    "url": "https://indianexpress.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "mint",
+    "name": "Mint",
+    "category": "News & Reading",
+    "domain": "livemint.com",
+    "aliases": [
+      "livemint"
+    ],
+    "logo": "/logos/mint.png",
+    "logoSource": "https://livemint.com",
+    "color": "#ffffff",
+    "url": "https://livemint.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "moneycontrol",
+    "name": "Moneycontrol Pro",
+    "category": "News & Reading",
+    "domain": "moneycontrol.com",
+    "aliases": [
+      "moneycontrol"
+    ],
+    "logo": "/logos/moneycontrol.png",
+    "logoSource": "https://moneycontrol.com",
+    "color": "#ffffff",
+    "url": "https://moneycontrol.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "disney",
+    "name": "Disney+",
+    "category": "Entertainment",
+    "domain": "disneyplus.com",
+    "aliases": [
+      "disneyplus",
+      "disney plus",
+      "disney+"
+    ],
+    "logo": "/logos/disney.png",
+    "logoSource": "https://disneyplus.com",
+    "color": "#ffffff",
+    "url": "https://disneyplus.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Selected international markets"
+  },
+  {
+    "id": "hbo",
+    "name": "HBO Max",
+    "category": "Entertainment",
+    "domain": "hbomax.com",
+    "aliases": [
+      "hbo max",
+      "hbomax"
+    ],
+    "logo": "/logos/hbo.png",
+    "logoSource": "https://www.hbomax.com/dotcom/img/hbomax/apple-touch-icon.png",
+    "color": "#000000",
+    "url": "https://hbomax.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Selected international markets"
+  },
+  {
+    "id": "paramount",
+    "name": "Paramount+",
+    "category": "Entertainment",
+    "domain": "paramountplus.com",
+    "aliases": [
+      "paramountplus",
+      "paramount+"
+    ],
+    "logo": "/logos/paramount.svg",
+    "logoSource": "https://www.paramount.com/brand/paramount-plus",
+    "color": "#0064FF",
+    "url": "https://paramountplus.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Selected international markets"
+  },
+  {
+    "id": "xbox",
+    "name": "Xbox Game Pass",
+    "category": "Gaming",
+    "domain": "xbox.com",
+    "aliases": [
+      "xbox game pass",
+      "gamepass",
+      "xboxgamepass"
+    ],
+    "logo": "/logos/xbox.png",
+    "logoSource": "https://xbox.com",
+    "color": "#ffffff",
+    "url": "https://xbox.com",
+    "description": "Gaming service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "playstation",
+    "name": "PlayStation Plus",
+    "category": "Gaming",
+    "domain": "playstation.com",
+    "aliases": [
+      "playstation plus",
+      "ps plus",
+      "playstation network"
+    ],
+    "logo": "/logos/playstation.png",
+    "logoSource": "https://playstation.com",
+    "color": "#ffffff",
+    "url": "https://playstation.com",
+    "description": "Gaming service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "nintendo",
+    "name": "Nintendo Switch Online",
+    "category": "Gaming",
+    "domain": "nintendo.com",
+    "aliases": [
+      "nintendo switch online",
+      "nintendo online"
+    ],
+    "logo": "/logos/nintendo.png",
+    "logoSource": "https://nintendo.com",
+    "color": "#ffffff",
+    "url": "https://nintendo.com",
+    "description": "Gaming service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "eaplay",
+    "name": "EA Play",
+    "category": "Gaming",
+    "domain": "ea.com",
+    "aliases": [
+      "ea play",
+      "eaplay"
+    ],
+    "logo": "/logos/eaplay.png",
+    "logoSource": "https://ea.com",
+    "color": "#ffffff",
+    "url": "https://ea.com",
+    "description": "Gaming service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "ubisoft",
+    "name": "Ubisoft+",
+    "category": "Gaming",
+    "domain": "ubisoft.com",
+    "aliases": [
+      "ubisoft+",
+      "ubisoft plus"
+    ],
+    "logo": "/logos/ubisoft.png",
+    "logoSource": "https://ubisoft.com",
+    "color": "#ffffff",
+    "url": "https://ubisoft.com",
+    "description": "Gaming service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "geforcenow",
+    "name": "GeForce NOW",
+    "category": "Gaming",
+    "domain": "nvidia.com",
+    "aliases": [
+      "geforce now",
+      "geforcenow"
+    ],
+    "logo": "/logos/geforcenow.png",
+    "logoSource": "https://nvidia.com",
+    "color": "#ffffff",
+    "url": "https://nvidia.com",
+    "description": "Gaming service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "applefitness",
+    "name": "Apple Fitness+",
+    "category": "Health",
+    "domain": "apple.com",
+    "aliases": [
+      "apple fitness",
+      "fitness+"
+    ],
+    "logo": "/logos/applefitness.png",
+    "logoSource": "https://apple.com",
+    "color": "#ffffff",
+    "url": "https://apple.com",
+    "description": "Health service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "norton",
+    "name": "Norton 360",
+    "category": "Security",
+    "domain": "norton.com",
+    "aliases": [
+      "norton 360",
+      "norton"
+    ],
+    "logo": "/logos/norton.png",
+    "logoSource": "https://norton.com",
+    "color": "#ffffff",
+    "url": "https://norton.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "mcafee",
+    "name": "McAfee",
+    "category": "Security",
+    "domain": "mcafee.com",
+    "aliases": [
+      "mcafee"
+    ],
+    "logo": "/logos/mcafee.png",
+    "logoSource": "https://mcafee.com",
+    "color": "#ffffff",
+    "url": "https://mcafee.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "cyberghost",
+    "name": "CyberGhost VPN",
+    "category": "Security",
+    "domain": "cyberghostvpn.com",
+    "aliases": [
+      "cyberghost"
+    ],
+    "logo": "/logos/cyberghost.png",
+    "logoSource": "https://cyberghostvpn.com",
+    "color": "#ffffff",
+    "url": "https://cyberghostvpn.com",
+    "description": "Security service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "discovery",
+    "name": "discovery+",
+    "category": "Entertainment",
+    "domain": "discoveryplus.in",
+    "aliases": [
+      "discoveryplus",
+      "discovery+"
+    ],
+    "logo": "/logos/discovery.png",
+    "logoSource": "https://discoveryplus.in",
+    "color": "#ffffff",
+    "url": "https://discoveryplus.in",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "hoichoi",
+    "name": "hoichoi",
+    "category": "Entertainment",
+    "domain": "hoichoi.tv",
+    "aliases": [
+      "hoichoi"
+    ],
+    "logo": "/logos/hoichoi.png",
+    "logoSource": "https://hoichoi.tv",
+    "color": "#ffffff",
+    "url": "https://hoichoi.tv",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "airtelxstream",
+    "name": "Airtel Xstream Play",
+    "category": "Entertainment",
+    "domain": "airtelxstream.in",
+    "aliases": [
+      "airtel xstream",
+      "xstream play"
+    ],
+    "logo": "/logos/airtelxstream.png",
+    "logoSource": "https://airtelxstream.in",
+    "color": "#ffffff",
+    "url": "https://airtelxstream.in",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "tataplaybinge",
+    "name": "Tata Play Binge",
+    "category": "Entertainment",
+    "domain": "tataplaybinge.com",
+    "aliases": [
+      "tata play binge",
+      "tataplaybinge"
+    ],
+    "logo": "/logos/tataplaybinge.png",
+    "logoSource": "https://tataplaybinge.com",
+    "color": "#ffffff",
+    "url": "https://tataplaybinge.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "shemaroo",
+    "name": "ShemarooMe",
+    "category": "Entertainment",
+    "domain": "shemaroome.com",
+    "aliases": [
+      "shemaroome",
+      "shemaroo"
+    ],
+    "logo": "/logos/shemaroo.png",
+    "logoSource": "https://shemaroome.com",
+    "color": "#ffffff",
+    "url": "https://shemaroome.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "peacock",
+    "name": "Peacock",
+    "category": "Entertainment",
+    "domain": "peacocktv.com",
+    "aliases": [
+      "peacocktv",
+      "peacock premium"
+    ],
+    "logo": "/logos/peacock.png",
+    "logoSource": "https://peacocktv.com",
+    "color": "#ffffff",
+    "url": "https://peacocktv.com",
+    "description": "Entertainment service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Selected international markets"
+  },
+  {
+    "id": "midjourney",
+    "name": "Midjourney",
+    "category": "AI & Development",
+    "domain": "midjourney.com",
+    "aliases": [
+      "midjourney"
+    ],
+    "logo": "/logos/midjourney.png",
+    "logoSource": "https://midjourney.com",
+    "color": "#ffffff",
+    "url": "https://midjourney.com",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "runway",
+    "name": "Runway",
+    "category": "AI & Development",
+    "domain": "runwayml.com",
+    "aliases": [
+      "runwayml",
+      "runway ai"
+    ],
+    "logo": "/logos/runway.png",
+    "logoSource": "https://runwayml.com",
+    "color": "#ffffff",
+    "url": "https://runwayml.com",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "elevenlabs",
+    "name": "ElevenLabs",
+    "category": "AI & Development",
+    "domain": "elevenlabs.io",
+    "aliases": [
+      "elevenlabs"
+    ],
+    "logo": "/logos/elevenlabs.png",
+    "logoSource": "https://elevenlabs.io",
+    "color": "#ffffff",
+    "url": "https://elevenlabs.io",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "lovable",
+    "name": "Lovable",
+    "category": "AI & Development",
+    "domain": "lovable.dev",
+    "aliases": [
+      "lovable"
+    ],
+    "logo": "/logos/lovable.png",
+    "logoSource": "https://lovable.dev",
+    "color": "#ffffff",
+    "url": "https://lovable.dev",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "bolt",
+    "name": "Bolt",
+    "category": "AI & Development",
+    "domain": "bolt.new",
+    "aliases": [
+      "bolt.new",
+      "stackblitz"
+    ],
+    "logo": "/logos/bolt.png",
+    "logoSource": "https://bolt.new",
+    "color": "#ffffff",
+    "url": "https://bolt.new",
+    "description": "AI & Development service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "wsj",
+    "name": "The Wall Street Journal",
+    "category": "News & Reading",
+    "domain": "wsj.com",
+    "aliases": [
+      "wall street journal",
+      "wsj.com"
+    ],
+    "logo": "/logos/wsj.png",
+    "logoSource": "https://wsj.com",
+    "color": "#ffffff",
+    "url": "https://wsj.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "ft",
+    "name": "Financial Times",
+    "category": "News & Reading",
+    "domain": "ft.com",
+    "aliases": [
+      "financial times"
+    ],
+    "logo": "/logos/ft.png",
+    "logoSource": "https://ft.com",
+    "color": "#ffffff",
+    "url": "https://ft.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "bloomberg",
+    "name": "Bloomberg",
+    "category": "News & Reading",
+    "domain": "bloomberg.com",
+    "aliases": [
+      "bloomberg"
+    ],
+    "logo": "/logos/bloomberg.png",
+    "logoSource": "https://bloomberg.com",
+    "color": "#ffffff",
+    "url": "https://bloomberg.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "washingtonpost",
+    "name": "The Washington Post",
+    "category": "News & Reading",
+    "domain": "washingtonpost.com",
+    "aliases": [
+      "washington post",
+      "washingtonpost"
+    ],
+    "logo": "/logos/washingtonpost.png",
+    "logoSource": "https://washingtonpost.com",
+    "color": "#ffffff",
+    "url": "https://washingtonpost.com",
+    "description": "News & Reading service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "mega",
+    "name": "MEGA",
+    "category": "Storage",
+    "domain": "mega.io",
+    "aliases": [
+      "mega.io",
+      "mega.nz"
+    ],
+    "logo": "/logos/mega.png",
+    "logoSource": "https://mega.io",
+    "color": "#ffffff",
+    "url": "https://mega.io",
+    "description": "Storage service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "pcloud",
+    "name": "pCloud",
+    "category": "Storage",
+    "domain": "pcloud.com",
+    "aliases": [
+      "pcloud"
+    ],
+    "logo": "/logos/pcloud.png",
+    "logoSource": "https://pcloud.com",
+    "color": "#ffffff",
+    "url": "https://pcloud.com",
+    "description": "Storage service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "box",
+    "name": "Box",
+    "category": "Storage",
+    "domain": "box.com",
+    "aliases": [
+      "box.com"
+    ],
+    "logo": "/logos/box.png",
+    "logoSource": "https://box.com",
+    "color": "#ffffff",
+    "url": "https://box.com",
+    "description": "Storage service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "zoho",
+    "name": "Zoho One",
+    "category": "Productivity",
+    "domain": "zoho.com",
+    "aliases": [
+      "zoho one",
+      "zoho"
+    ],
+    "logo": "/logos/zoho.png",
+    "logoSource": "https://zoho.com",
+    "color": "#ffffff",
+    "url": "https://zoho.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "asana",
+    "name": "Asana",
+    "category": "Productivity",
+    "domain": "asana.com",
+    "aliases": [
+      "asana"
+    ],
+    "logo": "/logos/asana.png",
+    "logoSource": "https://asana.com",
+    "color": "#ffffff",
+    "url": "https://asana.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "monday",
+    "name": "monday.com",
+    "category": "Productivity",
+    "domain": "monday.com",
+    "aliases": [
+      "monday.com"
+    ],
+    "logo": "/logos/monday.png",
+    "logoSource": "https://monday.com",
+    "color": "#ffffff",
+    "url": "https://monday.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "trello",
+    "name": "Trello",
+    "category": "Productivity",
+    "domain": "trello.com",
+    "aliases": [
+      "trello"
+    ],
+    "logo": "/logos/trello.png",
+    "logoSource": "https://trello.com",
+    "color": "#ffffff",
+    "url": "https://trello.com",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  },
+  {
+    "id": "proton",
+    "name": "Proton Unlimited",
+    "category": "Productivity",
+    "domain": "proton.me",
+    "aliases": [
+      "proton unlimited"
+    ],
+    "logo": "/logos/proton.png",
+    "logoSource": "https://proton.me",
+    "color": "#ffffff",
+    "url": "https://proton.me",
+    "description": "Productivity service · automatically matched from supported card and UPI payment feeds.",
+    "region": "Availability depends on provider"
+  }
+]

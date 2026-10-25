@@ -1,0 +1,30 @@
+node_modules/
+.env
+.env.*
+!.env.example
+!mobile/.env.example
+data/
+dist/
+test-results/
+playwright-report/
+mobile/.expo/
+mobile/build/
+mobile/ios/
+mobile/android/
+*.log
+.DS_Store
+# Native signing keys and local account credentials must never be uploaded.
+*.jks
+*.keystore
+*.p12
+*.p8
+*.mobileprovision
+credentials.json
+service-account*.json
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+# Local design-review captures and onboarding notes are not application source.
+/*.png
+/provider-onboarding.txt

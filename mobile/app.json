@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Subwise",
+    "slug": "subwise",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "subwise",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "in.subwise.mobile",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false
+        }
+      },
+      "buildNumber": "1"
+    },
+    "android": {
+      "package": "in.subwise.mobile",
+      "permissions": [],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#194f3e"
+      },
+      "versionCode": 1
+    },
+    "plugins": ["expo-secure-store"],
+    "platforms": ["ios", "android"],
+    "icon": "./assets/icon.png"
+  }
+}

@@ -1,0 +1,19 @@
+services:
+  subwise:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_PATH: /app/data/subwise.sqlite
+    ports:
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - subwise-data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+volumes:
+  subwise-data:
