@@ -55,26 +55,31 @@ export function connectorAvailable(channel) {
       .includes(channel)
   );
 }
-db.exec(`CREATE TABLE IF NOT EXISTS connections(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,channel TEXT NOT NULL,status TEXT NOT NULL,last_sync TEXT,created TEXT NOT NULL);
+await db.exec(`CREATE TABLE IF NOT EXISTS connections(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,channel TEXT NOT NULL,status TEXT NOT NULL,last_sync TEXT,created TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS provider_transactions(connection_id TEXT NOT NULL REFERENCES connections(id) ON DELETE CASCADE,provider_id TEXT NOT NULL,merchant TEXT NOT NULL,amount INTEGER NOT NULL,date TEXT NOT NULL,currency TEXT NOT NULL,PRIMARY KEY(connection_id,provider_id));
 CREATE TABLE IF NOT EXISTS financial_events(id TEXT PRIMARY KEY,created TEXT NOT NULL);`);
 export function registerFinancialWebhook(app) {
   app.post(
     "/api/webhooks/financial",
-    express.raw({ type: "application/json", limit: "2mb" }),
-    (req, res) => {
+    express.raw({
+      type: "application/json",
+      limit: "2mb",
+    }),
+    async (req, res) => {
       const secret = process.env.FINANCIAL_WEBHOOK_SECRET;
       if (!secret)
-        return res
-          .status(503)
-          .json({ error: "Financial provider is not configured" });
+        return res.status(503).json({
+          error: "Financial provider is not configured",
+        });
       const timestamp = req.get("x-subwise-timestamp") || "",
         signature = req.get("x-subwise-signature") || "";
       if (
         !/^\d+$/.test(timestamp) ||
         Math.abs(Date.now() / 1000 - Number(timestamp)) > 300
       )
-        return res.status(401).json({ error: "Expired financial event" });
+        return res.status(401).json({
+          error: "Expired financial event",
+        });
       const expected = createHmac("sha256", secret)
         .update(timestamp + ".")
         .update(req.body)
@@ -83,51 +88,66 @@ export function registerFinancialWebhook(app) {
         signature.length !== expected.length ||
         !timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
       )
-        return res.status(401).json({ error: "Invalid signature" });
+        return res.status(401).json({
+          error: "Invalid signature",
+        });
       const event = eventSchema.parse(JSON.parse(req.body.toString()));
-      const connection = db
+      const connection = await db
         .prepare("SELECT * FROM connections WHERE id=?")
         .get(event.connectionId);
       if (!connection)
-        return res.status(404).json({ error: "Connection not found" });
+        return res.status(404).json({
+          error: "Connection not found",
+        });
       if (!connectorAvailable(connection.channel))
-        return res.status(503).json({ error: "Channel is not enabled" });
+        return res.status(503).json({
+          error: "Channel is not enabled",
+        });
       if (
-        db.prepare("SELECT id FROM financial_events WHERE id=?").get(event.id)
+        await db
+          .prepare("SELECT id FROM financial_events WHERE id=?")
+          .get(event.id)
       )
-        return res.json({ ok: true, duplicate: true });
+        return res.json({
+          ok: true,
+          duplicate: true,
+        });
       if (connection.status === "revoked")
-        return res.status(409).json({ error: "Connection is revoked" });
+        return res.status(409).json({
+          error: "Connection is revoked",
+        });
       if (
         event.status !== "connected" &&
         (event.transactions.length || event.recurring.length)
       )
-        return res
-          .status(400)
-          .json({ error: "Transactions require active consent" });
-      db.exec("BEGIN IMMEDIATE");
+        return res.status(400).json({
+          error: "Transactions require active consent",
+        });
+      await db.exec("BEGIN IMMEDIATE");
       try {
         let added = 0;
         for (const t of event.transactions)
           added += Number(
-            db
-              .prepare(
-                "INSERT OR IGNORE INTO provider_transactions VALUES(?,?,?,?,?,?)",
-              )
-              .run(
-                connection.id,
-                t.id,
-                t.merchant,
-                t.amount,
-                t.date,
-                t.currency,
-              ).changes,
+            (
+              await db
+                .prepare(
+                  "INSERT OR IGNORE INTO provider_transactions VALUES(?,?,?,?,?,?)",
+                )
+                .run(
+                  connection.id,
+                  t.id,
+                  t.merchant,
+                  t.amount,
+                  t.date,
+                  t.currency,
+                )
+            ).changes,
           );
-        db.prepare(
-          "UPDATE connections SET status=?,last_sync=? WHERE id=?",
-        ).run(event.status, new Date().toISOString(), connection.id);
+        await db
+          .prepare("UPDATE connections SET status=?,last_sync=? WHERE id=?")
+          .run(event.status, new Date().toISOString(), connection.id);
         if (event.status === "connected") {
-          const all = db
+          const all = await db
             .prepare(
               "SELECT merchant,amount,date FROM provider_transactions WHERE connection_id=?",
             )
@@ -143,7 +163,7 @@ export function registerFinancialWebhook(app) {
               ),
           )) {
             const key = connection.id + ":" + found.merchantKey;
-            const existing = db
+            const existing = await db
               .prepare(
                 "SELECT * FROM subscriptions WHERE user_id=? AND merchant_key=?",
               )
@@ -155,33 +175,37 @@ export function registerFinancialWebhook(app) {
                 : "active";
             if (existing) {
               if (existing.status !== "cancelled")
-                db.prepare(
-                  "UPDATE subscriptions SET amount=?,cadence=?,next_date=?,confidence=? WHERE id=?",
-                ).run(
+                await db
+                  .prepare(
+                    "UPDATE subscriptions SET amount=?,cadence=?,next_date=?,confidence=? WHERE id=?",
+                  )
+                  .run(
+                    found.amount,
+                    found.cadence,
+                    found.nextDate,
+                    found.confidence,
+                    existing.id,
+                  );
+            } else
+              await db
+                .prepare(
+                  "INSERT INTO subscriptions(id,user_id,name,amount,cadence,next_date,category,payment,status,source,merchant_key,confidence,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                )
+                .run(
+                  randomUUID(),
+                  connection.user_id,
+                  found.name,
                   found.amount,
                   found.cadence,
                   found.nextDate,
+                  found.category,
+                  connection.channel === "card" ? "Card" : "UPI",
+                  status,
+                  connection.channel,
+                  key,
                   found.confidence,
-                  existing.id,
+                  new Date().toISOString(),
                 );
-            } else
-              db.prepare(
-                "INSERT INTO subscriptions(id,user_id,name,amount,cadence,next_date,category,payment,status,source,merchant_key,confidence,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-              ).run(
-                randomUUID(),
-                connection.user_id,
-                found.name,
-                found.amount,
-                found.cadence,
-                found.nextDate,
-                found.category,
-                connection.channel === "card" ? "Card" : "UPI",
-                status,
-                connection.channel,
-                key,
-                found.confidence,
-                new Date().toISOString(),
-              );
           }
         }
         for (const stream of event.recurring) {
@@ -193,59 +217,67 @@ export function registerFinancialWebhook(app) {
             (service?.id ||
               stream.merchant.toLowerCase().replace(/[^a-z]/g, ""));
           // Preserve subscription identity and its cancellation authorization when an inferred stream becomes authoritative.
-          db.prepare(
-            "UPDATE subscriptions SET merchant_key=? WHERE user_id=? AND merchant_key=? AND NOT EXISTS (SELECT 1 FROM subscriptions WHERE user_id=? AND merchant_key=?)",
-          ).run(
-            streamKey,
-            connection.user_id,
-            inferredKey,
-            connection.user_id,
-            streamKey,
-          );
-          db.prepare(
-            "DELETE FROM subscriptions WHERE user_id=? AND merchant_key=? AND NOT EXISTS (SELECT 1 FROM cancellation_jobs WHERE cancellation_jobs.subscription_id=subscriptions.id)",
-          ).run(connection.user_id, inferredKey);
-          db.prepare(
-            "INSERT INTO subscriptions(id,user_id,name,amount,cadence,next_date,category,payment,status,source,merchant_key,confidence,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(user_id,merchant_key) WHERE merchant_key IS NOT NULL DO UPDATE SET name=excluded.name,amount=excluded.amount,cadence=excluded.cadence,next_date=excluded.next_date,status=excluded.status,confidence=excluded.confidence",
-          ).run(
-            randomUUID(),
-            connection.user_id,
-            service?.name || stream.merchant,
-            stream.amount,
-            stream.cadence,
-            stream.nextDate,
-            service?.category || "Other",
-            connection.channel === "card" ? "Card" : "UPI",
-            stream.status,
-            connection.channel,
-            streamKey,
-            1,
-            new Date().toISOString(),
-          );
+          await db
+            .prepare(
+              "UPDATE subscriptions SET merchant_key=? WHERE user_id=? AND merchant_key=? AND NOT EXISTS (SELECT 1 FROM subscriptions WHERE user_id=? AND merchant_key=?)",
+            )
+            .run(
+              streamKey,
+              connection.user_id,
+              inferredKey,
+              connection.user_id,
+              streamKey,
+            );
+          await db
+            .prepare(
+              "DELETE FROM subscriptions WHERE user_id=? AND merchant_key=? AND NOT EXISTS (SELECT 1 FROM cancellation_jobs WHERE cancellation_jobs.subscription_id=subscriptions.id)",
+            )
+            .run(connection.user_id, inferredKey);
+          await db
+            .prepare(
+              "INSERT INTO subscriptions(id,user_id,name,amount,cadence,next_date,category,payment,status,source,merchant_key,confidence,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(user_id,merchant_key) WHERE merchant_key IS NOT NULL DO UPDATE SET name=excluded.name,amount=excluded.amount,cadence=excluded.cadence,next_date=excluded.next_date,status=excluded.status,confidence=excluded.confidence",
+            )
+            .run(
+              randomUUID(),
+              connection.user_id,
+              service?.name || stream.merchant,
+              stream.amount,
+              stream.cadence,
+              stream.nextDate,
+              service?.category || "Other",
+              connection.channel === "card" ? "Card" : "UPI",
+              stream.status,
+              connection.channel,
+              streamKey,
+              1,
+              new Date().toISOString(),
+            );
         }
-        db.prepare("INSERT INTO financial_events VALUES(?,?)").run(
-          event.id,
-          new Date().toISOString(),
-        );
-        audit(
+        await db
+          .prepare("INSERT INTO financial_events VALUES(?,?)")
+          .run(event.id, new Date().toISOString());
+        await audit(
           connection.user_id,
           "connection." + event.status,
           `${connection.channel}: ${added} new transactions`,
         );
-        reconcileCancellationStates();
-        db.exec("COMMIT");
-        res.json({ ok: true, added });
+        await reconcileCancellationStates();
+        await db.exec("COMMIT");
+        res.json({
+          ok: true,
+          added,
+        });
       } catch (e) {
-        db.exec("ROLLBACK");
+        await db.exec("ROLLBACK");
         throw e;
       }
     },
   );
 }
 export function registerConnectionRoutes(app, { auth, paid, origin }) {
-  app.get("/api/connections", auth, (req, res) =>
+  app.get("/api/connections", auth, async (req, res) =>
     res.json(
-      db
+      await db
         .prepare(
           "SELECT id,channel,status,last_sync,created FROM connections WHERE user_id=? ORDER BY created DESC",
         )
@@ -254,7 +286,9 @@ export function registerConnectionRoutes(app, { auth, paid, origin }) {
   );
   app.post("/api/connections", auth, paid, async (req, res) => {
     const { channel } = z
-      .object({ channel: channels })
+      .object({
+        channel: channels,
+      })
       .strict()
       .parse(req.body);
     if (!connectorAvailable(channel))
@@ -263,18 +297,13 @@ export function registerConnectionRoutes(app, { auth, paid, origin }) {
       });
     const base = new URL(process.env.FINANCIAL_CONNECTOR_URL);
     if (base.protocol !== "https:")
-      return res
-        .status(503)
-        .json({ error: "The financial connector requires HTTPS" });
+      return res.status(503).json({
+        error: "The financial connector requires HTTPS",
+      });
     const id = randomUUID();
-    db.prepare("INSERT INTO connections VALUES(?,?,?,?,?,?)").run(
-      id,
-      req.user.id,
-      channel,
-      "pending",
-      null,
-      new Date().toISOString(),
-    );
+    await db
+      .prepare("INSERT INTO connections VALUES(?,?,?,?,?,?)")
+      .run(id, req.user.id, channel, "pending", null, new Date().toISOString());
     try {
       const result = await fetch(new URL("/sessions", base), {
         method: "POST",
@@ -299,10 +328,15 @@ export function registerConnectionRoutes(app, { auth, paid, origin }) {
         .map((x) => x.trim());
       if (url.protocol !== "https:" || !allowed.includes(url.origin))
         throw Error("Provider returned an unapproved authorization origin");
-      audit(req.user.id, "connection.started", channel);
-      res.status(201).json({ id, authorizationUrl: url.href });
+      await audit(req.user.id, "connection.started", channel);
+      res.status(201).json({
+        id,
+        authorizationUrl: url.href,
+      });
     } catch {
-      db.prepare("UPDATE connections SET status='error' WHERE id=?").run(id);
+      await db
+        .prepare("UPDATE connections SET status='error' WHERE id=?")
+        .run(id);
       res.status(502).json({
         error:
           "The connection provider is unavailable. Please try again later.",

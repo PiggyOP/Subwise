@@ -1,6 +1,6 @@
 # Architecture
 
-The website and native React Native app share an authenticated Express API and a single-instance SQLite database. Financial amounts are integer INR paise. Browser sessions use HttpOnly cookies; native sessions use protected device storage and bearer tokens. Server session tokens are stored only as hashes. Every financial query is scoped to its authenticated owner.
+The website and native React Native app share an authenticated Express API. Local development uses SQLite; the Netlify deployment uses persistent PostgreSQL. Financial amounts are integer INR paise. Browser sessions use HttpOnly cookies; native sessions use protected device storage and bearer tokens. Server session tokens are stored only as hashes. Every financial query is scoped to its authenticated owner.
 
 ## Connected-only data
 
@@ -24,6 +24,6 @@ Local testing uses `ENABLE_TEST_PLUS=true`, yielding an explicit `test_plus` ent
 
 ## Production boundaries
 
-Single Node process, TLS reverse proxy and encrypted persistent SQLite volume are the current deployment model. Docker configuration is supplied but untested here. Horizontal scaling needs a shared transactional database, centralized limits and a durable queue.
+The website can run on Netlify Functions with PostgreSQL, or as a single Node process behind TLS with encrypted persistent SQLite storage. Netlify requests and scheduled jobs use separate database transaction contexts. Provider jobs are durable and run in bounded batches; unconfigured scheduled providers do not connect to PostgreSQL. See NETLIFY.md for deployment details. Docker configuration is supplied but untested here. Higher-scale deployment still needs centralized rate limits and capacity planning for the durable workers.
 
 Live email-provider setup/testing, account recovery, step-up authentication, live-provider lifecycle testing, security review, operational monitoring, consent/disconnection/deletion implementation, native purchase verification, device QA and signing remain release work. Native deep-link return from provider authorization also needs implementation. Root dependency audit is clean; native build-chain audit findings remain unresolved. No regulatory certification, security certification, live financial access or production deployment is claimed.

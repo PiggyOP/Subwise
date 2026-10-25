@@ -170,7 +170,7 @@ test("capability events enforce signature, replay window, subscription scope and
   assert.equal((await webhook(event)).data.duplicate, true);
   await webhook({ ...event, id: randomUUID(), enabled: false, version: 2 });
   await webhook({ ...event, id: randomUUID(), version: 1 });
-  assert.equal(c.cancellationDetails(id).available, false);
+  assert.equal((await c.cancellationDetails(id)).available, false);
   assert.equal((await cancel(id)).status, 409);
 });
 test("queued jobs are idempotent and stale capability versions are rejected", async () => {
@@ -224,7 +224,7 @@ test("accepted request remains pending until verified confirmation; scheduled ca
   assert.deepEqual(calls, ["POST", "GET"]);
   assert.equal(job(id).status, "scheduled");
   assert.equal(status(id), "cancellation_requested");
-  assert.ok(c.cancellationDetails(id).job.confirmation);
+  assert.ok((await c.cancellationDetails(id)).job.confirmation);
   await c.runCancellationWorker({
     now: new Date(now.getTime() + 3600001),
     request: async () => {
@@ -342,10 +342,10 @@ test("worker crash recovers through read-only reconciliation and ignores stale n
     result: confirmed(j, { sequence: 4, status: "failed" }),
   });
   assert.equal(job(id).status, "scheduled");
-  assert.equal(c.cancellationInProgress(owner, id), true);
-  assert.equal(c.cancellationInProgress(other, id), false);
+  assert.equal(await c.cancellationInProgress(owner, id), true);
+  assert.equal(await c.cancellationInProgress(other, id), false);
   db.prepare("UPDATE subscriptions SET status='active' WHERE id=?").run(id);
-  c.reconcileCancellationStates();
+  await c.reconcileCancellationStates();
   assert.equal(status(id), "cancellation_requested");
 });
 test("a definitive provider failure is visible and never reported as cancelled", async () => {
@@ -362,7 +362,7 @@ test("a definitive provider failure is visible and never reported as cancelled",
   });
   assert.equal(job(id).status, "failed");
   assert.equal(status(id), "active");
-  assert.ok(c.cancellationDetails(id).job.error);
+  assert.ok((await c.cancellationDetails(id)).job.error);
 });
 
 test("HTTPS transport uses a stable idempotency key, exact bound reference, and read-only status checks", async () => {

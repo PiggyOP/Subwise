@@ -28,3 +28,6 @@ service-account*.json
 # Local design-review captures and onboarding notes are not application source.
 /*.png
 /provider-onboarding.txt
+# Local deployment metadata and temporary migration tools.
+.netlify/
+work/

@@ -29,7 +29,7 @@ A connected-only card/UPI adapter contract and signed ingestion engine are now i
 - Run security, accessibility and load reviews against the deployed stack. Review financial-data handling and product disclosures with qualified local specialists. No regulatory or security certification is claimed.
 - Define and implement retention, support/disputes, deletion of provider-side data, cancellation evidence retention and customer-facing terms/privacy disclosures for the actual integrations and business.
 - Add server jobs and delivery-provider integration if you promise email/push renewal reminders. The delivered renewal view is in-app only.
-- Replace SQLite with an appropriate shared database and centralized rate limits if scaling beyond one instance. Add a durable queue for automatic sync before claiming always-on detection.
+- Use the supported PostgreSQL deployment and add centralized rate limits if scaling beyond one instance. Add a durable queue for automatic sync before claiming always-on detection.
 
 ## What not to advertise yet
 

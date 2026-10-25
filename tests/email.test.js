@@ -23,8 +23,12 @@ global.fetch = async (url, opts) => {
   if (String(url) === "https://api.resend.com/emails") {
     captured.push(JSON.parse(opts.body));
     return failProvider
-      ? new Response("{}", { status: 503 })
-      : Response.json({ id: "email-" + randomUUID() });
+      ? new Response("{}", {
+          status: 503,
+        })
+      : Response.json({
+          id: "email-" + randomUUID(),
+        });
   }
   return realFetch(url, opts);
 };
@@ -50,11 +54,18 @@ async function req(route, body, u, method) {
     method: method || (body ? "POST" : "GET"),
     headers: {
       "Content-Type": "application/json",
-      ...(u ? { Authorization: u.id } : {}),
+      ...(u
+        ? {
+            Authorization: u.id,
+          }
+        : {}),
     },
     body: body ? JSON.stringify(body) : undefined,
   });
-  return { status: r.status, data: await r.json().catch(() => null) };
+  return {
+    status: r.status,
+    data: await r.json().catch(() => null),
+  };
 }
 test.before(async () => {
   const app = express();
@@ -71,7 +82,9 @@ test.before(async () => {
     verifyPassword: async (password) => password === "correct-password",
   });
   app.use((e, req, res, next) =>
-    res.status(400).json({ error: "Invalid request" }),
+    res.status(400).json({
+      error: "Invalid request",
+    }),
   );
   server = app.listen(0, "127.0.0.1");
   await new Promise((resolve) => server.once("listening", resolve));
@@ -81,7 +94,10 @@ test.after(() => {
   global.fetch = realFetch;
   server?.close();
   db.close();
-  rmSync(dir, { recursive: true, force: true });
+  rmSync(dir, {
+    recursive: true,
+    force: true,
+  });
 });
 test("monthly schedule uses 09:00 India time and handles year rollover", () => {
   assert.equal(
@@ -103,7 +119,11 @@ test("profile persists email preferences, verifies ownership, and protects email
     (
       await req(
         "/api/profile",
-        { name: "Updated Name", monthlyEnabled: true, monthlyDay: 12 },
+        {
+          name: "Updated Name",
+          monthlyEnabled: true,
+          monthlyDay: 12,
+        },
         u,
         "PATCH",
       )
@@ -112,27 +132,59 @@ test("profile persists email preferences, verifies ownership, and protects email
   );
   assert.equal((await req("/api/profile", null, u)).data.monthlyEnabled, true);
   assert.equal((await req("/api/profile/email/test", {}, u)).status, 409);
-  const sent = await req("/api/profile/email/request", { email: u.email }, u);
+  const sent = await req(
+    "/api/profile/email/request",
+    {
+      email: u.email,
+    },
+    u,
+  );
   assert.equal(sent.status, 200);
   assert.equal(sent.data.code, undefined);
   const code = captured.at(-1).text.match(/\b\d{6}\b/)[0];
   assert.equal(
-    (await req("/api/profile/email/verify", { code: "000000" }, u)).status,
+    (
+      await req(
+        "/api/profile/email/verify",
+        {
+          code: "000000",
+        },
+        u,
+      )
+    ).status,
     400,
   );
   assert.equal(
-    (await req("/api/profile/email/verify", { code }, u)).data.emailVerified,
+    (
+      await req(
+        "/api/profile/email/verify",
+        {
+          code,
+        },
+        u,
+      )
+    ).data.emailVerified,
     true,
   );
   assert.equal(
-    (await req("/api/profile/email/verify", { code }, u)).status,
+    (
+      await req(
+        "/api/profile/email/verify",
+        {
+          code,
+        },
+        u,
+      )
+    ).status,
     400,
   );
   assert.equal(
     (
       await req(
         "/api/profile/email/request",
-        { email: "another@example.com" },
+        {
+          email: "another@example.com",
+        },
         u,
       )
     ).status,
@@ -142,7 +194,10 @@ test("profile persists email preferences, verifies ownership, and protects email
     (
       await req(
         "/api/profile/email/request",
-        { email: "another@example.com", currentPassword: "correct-password" },
+        {
+          email: "another@example.com",
+          currentPassword: "correct-password",
+        },
         u,
       )
     ).status,
@@ -151,7 +206,9 @@ test("profile persists email preferences, verifies ownership, and protects email
   const changedCode = captured.at(-1).text.match(/\b\d{6}\b/)[0];
   const changed = await req(
     "/api/profile/email/verify",
-    { code: changedCode },
+    {
+      code: changedCode,
+    },
     u,
   );
   assert.equal(changed.data.email, "another@example.com");
@@ -163,7 +220,7 @@ test("profile persists email preferences, verifies ownership, and protects email
 test("monthly worker sends only verified opt-ins and prevents duplicate monthly messages", async () => {
   const a = user(),
     b = user();
-  for (const u of [a, b]) mail.ensureProfile(u.id);
+  for (const u of [a, b]) await mail.ensureProfile(u.id);
   db.prepare(
     "UPDATE profiles SET verified_email=?,monthly_enabled=1,monthly_day=1,next_send_at='2026-10-01T03:30:00.000Z' WHERE user_id=?",
   ).run(a.email, a.id);
@@ -173,11 +230,22 @@ test("monthly worker sends only verified opt-ins and prevents duplicate monthly 
   const sent = [];
   const now = new Date("2026-10-01T04:00:00Z");
   const sender = async (p, key) => {
-    sent.push({ p, key });
+    sent.push({
+      p,
+      key,
+    });
     return "test-id";
   };
-  await mail.runMonthlyEmails({ now, mailer: sender, configured: true });
-  await mail.runMonthlyEmails({ now, mailer: sender, configured: true });
+  await mail.runMonthlyEmails({
+    now,
+    mailer: sender,
+    configured: true,
+  });
+  await mail.runMonthlyEmails({
+    now,
+    mailer: sender,
+    configured: true,
+  });
   assert.equal(sent.length, 1);
   assert.equal(sent[0].p.to[0], a.email);
   assert.ok(sent[0].p.text.includes("not a bank statement"));
@@ -189,17 +257,19 @@ test("monthly worker sends only verified opt-ins and prevents duplicate monthly 
 });
 test("unsubscribe validates token and cancels pending monthly mail", async () => {
   const u = user();
-  mail.ensureProfile(u.id);
+  await mail.ensureProfile(u.id);
   db.prepare(
     "UPDATE profiles SET monthly_enabled=1,verified_email=? WHERE user_id=?",
   ).run(u.email, u.id);
-  mail.enqueueSummary(u, "monthly");
+  await mail.enqueueSummary(u, "monthly");
   const token = mail.unsubscribeToken(u);
   assert.equal(
     (
       await realFetch(
         base + "/api/email/unsubscribe?id=" + u.id + "&token=wrong",
-        { method: "POST" },
+        {
+          method: "POST",
+        },
       )
     ).status,
     400,
@@ -208,7 +278,9 @@ test("unsubscribe validates token and cancels pending monthly mail", async () =>
     (
       await realFetch(
         base + "/api/email/unsubscribe?id=" + u.id + "&token=" + token,
-        { method: "POST" },
+        {
+          method: "POST",
+        },
       )
     ).status,
     200,
@@ -226,13 +298,13 @@ test("unsubscribe validates token and cancels pending monthly mail", async () =>
 });
 test("provider outage is recorded and retries reuse the same idempotency key", async () => {
   const u = user();
-  mail.ensureProfile(u.id);
+  await mail.ensureProfile(u.id);
   db.prepare("UPDATE profiles SET verified_email=? WHERE user_id=?").run(
     u.email,
     u.id,
   );
   const now = new Date("2026-12-01T04:00:00Z"),
-    id = mail.enqueueSummary(u, "test", now),
+    id = await mail.enqueueSummary(u, "test", now),
     keys = [];
   await mail.runMonthlyEmails({
     now,

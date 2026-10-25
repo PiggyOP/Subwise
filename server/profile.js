@@ -25,12 +25,12 @@ const digest = (id, email, code) =>
   createHash("sha256")
     .update(id + ":" + email + ":" + code)
     .digest("hex");
-export function readProfile(id) {
-  const user = db
+export async function readProfile(id) {
+  const user = await db
       .prepare("SELECT id,name,email,created FROM users WHERE id=?")
       .get(id),
-    profile = ensureProfile(id),
-    pending = db
+    profile = await ensureProfile(id),
+    pending = await db
       .prepare(
         "SELECT email,expires FROM email_challenges WHERE user_id=? AND expires>? AND attempts<5",
       )
@@ -46,18 +46,18 @@ export function readProfile(id) {
     sendTime: "09:00",
     deliveryConfigured: emailConfigured(),
     lastEmail:
-      db
+      (await db
         .prepare(
           "SELECT kind,status,created FROM email_outbox WHERE user_id=? ORDER BY created DESC LIMIT 1",
         )
-        .get(id) || null,
+        .get(id)) || null,
   };
 }
 export function registerProfileRoutes(app, { auth, verifyPassword }) {
-  app.get("/api/profile", auth, (req, res) =>
-    res.json(readProfile(req.user.id)),
+  app.get("/api/profile", auth, async (req, res) =>
+    res.json(await readProfile(req.user.id)),
   );
-  app.patch("/api/profile", auth, (req, res) => {
+  app.patch("/api/profile", auth, async (req, res) => {
     const input = z
       .object({
         name: z.string().trim().min(1).max(80),
@@ -66,7 +66,7 @@ export function registerProfileRoutes(app, { auth, verifyPassword }) {
       })
       .strict()
       .parse(req.body);
-    const prior = ensureProfile(req.user.id);
+    const prior = await ensureProfile(req.user.id);
     let next = prior.next_send_at;
     if (!input.monthlyEnabled) next = null;
     else if (
@@ -75,31 +75,37 @@ export function registerProfileRoutes(app, { auth, verifyPassword }) {
       !next
     )
       next = nextMonthlySend(new Date(), input.monthlyDay);
-    db.exec("BEGIN IMMEDIATE");
+    await db.exec("BEGIN IMMEDIATE");
     try {
-      db.prepare("UPDATE users SET name=? WHERE id=?").run(
-        input.name,
-        req.user.id,
-      );
-      db.prepare(
-        "UPDATE profiles SET monthly_enabled=?,monthly_day=?,next_send_at=? WHERE user_id=?",
-      ).run(Number(input.monthlyEnabled), input.monthlyDay, next, req.user.id);
+      await db
+        .prepare("UPDATE users SET name=? WHERE id=?")
+        .run(input.name, req.user.id);
+      await db
+        .prepare(
+          "UPDATE profiles SET monthly_enabled=?,monthly_day=?,next_send_at=? WHERE user_id=?",
+        )
+        .run(Number(input.monthlyEnabled), input.monthlyDay, next, req.user.id);
       if (!input.monthlyEnabled)
-        db.prepare(
-          "UPDATE email_outbox SET status='cancelled' WHERE user_id=? AND kind='monthly' AND status='queued'",
-        ).run(req.user.id);
-      audit(req.user.id, "profile.updated");
-      db.exec("COMMIT");
+        await db
+          .prepare(
+            "UPDATE email_outbox SET status='cancelled' WHERE user_id=? AND kind='monthly' AND status='queued'",
+          )
+          .run(req.user.id);
+      await audit(req.user.id, "profile.updated");
+      await db.exec("COMMIT");
     } catch (e) {
-      db.exec("ROLLBACK");
+      await db.exec("ROLLBACK");
       throw e;
     }
-    res.json(readProfile(req.user.id));
+    res.json(await readProfile(req.user.id));
   });
   app.post(
     "/api/profile/email/request",
     auth,
-    rateLimit({ windowMs: 600000, limit: 6 }),
+    rateLimit({
+      windowMs: 600000,
+      limit: 6,
+    }),
     async (req, res) => {
       const input = z
         .object({
@@ -109,49 +115,45 @@ export function registerProfileRoutes(app, { auth, verifyPassword }) {
         .strict()
         .parse(req.body);
       if (!emailConfigured())
-        return res
-          .status(503)
-          .json({
-            error:
-              "Email delivery is not configured. Your email remains saved; verification can start after the operator connects an email provider.",
-          });
+        return res.status(503).json({
+          error:
+            "Email delivery is not configured. Your email remains saved; verification can start after the operator connects an email provider.",
+        });
       if (
         input.email !== req.user.email &&
         (!input.currentPassword ||
           !(await verifyPassword(input.currentPassword, req.user.password)))
       )
-        return res
-          .status(401)
-          .json({
-            error: "Enter your current password to change the account email.",
-          });
-      const taken = db
+        return res.status(401).json({
+          error: "Enter your current password to change the account email.",
+        });
+      const taken = await db
         .prepare("SELECT id FROM users WHERE email=? AND id<>?")
         .get(input.email, req.user.id);
       if (taken)
-        return res
-          .status(409)
-          .json({ error: "That email cannot be linked to this account." });
-      const previous = db
+        return res.status(409).json({
+          error: "That email cannot be linked to this account.",
+        });
+      const previous = await db
         .prepare("SELECT expires FROM email_challenges WHERE user_id=?")
         .get(req.user.id);
       if (previous && previous.expires > Date.now() + 9 * 60000)
-        return res
-          .status(429)
-          .json({
-            error: "Please wait one minute before requesting another code.",
-          });
+        return res.status(429).json({
+          error: "Please wait one minute before requesting another code.",
+        });
       const id = randomUUID(),
         code = String(randomInt(100000, 1000000));
-      db.prepare(
-        "INSERT INTO email_challenges VALUES(?,?,?,?,?,0) ON CONFLICT(user_id) DO UPDATE SET id=excluded.id,email=excluded.email,code_hash=excluded.code_hash,expires=excluded.expires,attempts=0",
-      ).run(
-        req.user.id,
-        id,
-        input.email,
-        digest(id, input.email, code),
-        Date.now() + 600000,
-      );
+      await db
+        .prepare(
+          "INSERT INTO email_challenges VALUES(?,?,?,?,?,0) ON CONFLICT(user_id) DO UPDATE SET id=excluded.id,email=excluded.email,code_hash=excluded.code_hash,expires=excluded.expires,attempts=0",
+        )
+        .run(
+          req.user.id,
+          id,
+          input.email,
+          digest(id, input.email, code),
+          Date.now() + 600000,
+        );
       try {
         await sendEmail(
           {
@@ -163,16 +165,13 @@ export function registerProfileRoutes(app, { auth, verifyPassword }) {
           "subwise/verify/" + id,
         );
       } catch {
-        db.prepare("DELETE FROM email_challenges WHERE user_id=? AND id=?").run(
-          req.user.id,
-          id,
-        );
-        return res
-          .status(502)
-          .json({
-            error:
-              "The email provider could not accept the verification email. Please try again later.",
-          });
+        await db
+          .prepare("DELETE FROM email_challenges WHERE user_id=? AND id=?")
+          .run(req.user.id, id);
+        return res.status(502).json({
+          error:
+            "The email provider could not accept the verification email. Please try again later.",
+        });
       }
       res.json({
         ok: true,
@@ -184,13 +183,18 @@ export function registerProfileRoutes(app, { auth, verifyPassword }) {
   app.post(
     "/api/profile/email/verify",
     auth,
-    rateLimit({ windowMs: 600000, limit: 20 }),
-    (req, res) => {
+    rateLimit({
+      windowMs: 600000,
+      limit: 20,
+    }),
+    async (req, res) => {
       const { code } = z
-        .object({ code: z.string().regex(/^\d{6}$/) })
+        .object({
+          code: z.string().regex(/^\d{6}$/),
+        })
         .strict()
         .parse(req.body);
-      const challenge = db
+      const challenge = await db
         .prepare("SELECT * FROM email_challenges WHERE user_id=?")
         .get(req.user.id);
       if (
@@ -198,15 +202,15 @@ export function registerProfileRoutes(app, { auth, verifyPassword }) {
         challenge.expires <= Date.now() ||
         challenge.attempts >= 5
       )
-        return res
-          .status(400)
-          .json({
-            error:
-              "The verification code expired or was locked. Request a new code.",
-          });
-      db.prepare(
-        "UPDATE email_challenges SET attempts=attempts+1 WHERE user_id=?",
-      ).run(req.user.id);
+        return res.status(400).json({
+          error:
+            "The verification code expired or was locked. Request a new code.",
+        });
+      await db
+        .prepare(
+          "UPDATE email_challenges SET attempts=attempts+1 WHERE user_id=?",
+        )
+        .run(req.user.id);
       const expected = digest(challenge.id, challenge.email, code);
       if (
         !timingSafeEqual(
@@ -214,62 +218,72 @@ export function registerProfileRoutes(app, { auth, verifyPassword }) {
           Buffer.from(challenge.code_hash),
         )
       )
-        return res.status(400).json({ error: "Incorrect verification code." });
+        return res.status(400).json({
+          error: "Incorrect verification code.",
+        });
       if (
-        db
+        await db
           .prepare("SELECT id FROM users WHERE email=? AND id<>?")
           .get(challenge.email, req.user.id)
       )
-        return res
-          .status(409)
-          .json({ error: "That email cannot be linked to this account." });
-      const profile = ensureProfile(req.user.id);
-      db.exec("BEGIN IMMEDIATE");
+        return res.status(409).json({
+          error: "That email cannot be linked to this account.",
+        });
+      const profile = await ensureProfile(req.user.id);
+      await db.exec("BEGIN IMMEDIATE");
       try {
-        db.prepare("UPDATE users SET email=? WHERE id=?").run(
-          challenge.email,
-          req.user.id,
-        );
-        db.prepare(
-          "UPDATE profiles SET verified_email=?,verified_at=?,next_send_at=? WHERE user_id=?",
-        ).run(
-          challenge.email,
-          new Date().toISOString(),
-          profile.monthly_enabled
-            ? nextMonthlySend(new Date(), profile.monthly_day)
-            : null,
-          req.user.id,
-        );
-        db.prepare("DELETE FROM email_challenges WHERE user_id=?").run(
-          req.user.id,
-        );
-        db.prepare(
-          "UPDATE email_outbox SET status='cancelled' WHERE user_id=? AND status='queued' AND recipient<>?",
-        ).run(req.user.id, challenge.email);
-        audit(req.user.id, "email.verified");
-        db.exec("COMMIT");
+        await db
+          .prepare("UPDATE users SET email=? WHERE id=?")
+          .run(challenge.email, req.user.id);
+        await db
+          .prepare(
+            "UPDATE profiles SET verified_email=?,verified_at=?,next_send_at=? WHERE user_id=?",
+          )
+          .run(
+            challenge.email,
+            new Date().toISOString(),
+            profile.monthly_enabled
+              ? nextMonthlySend(new Date(), profile.monthly_day)
+              : null,
+            req.user.id,
+          );
+        await db
+          .prepare("DELETE FROM email_challenges WHERE user_id=?")
+          .run(req.user.id);
+        await db
+          .prepare(
+            "UPDATE email_outbox SET status='cancelled' WHERE user_id=? AND status='queued' AND recipient<>?",
+          )
+          .run(req.user.id, challenge.email);
+        await audit(req.user.id, "email.verified");
+        await db.exec("COMMIT");
       } catch (e) {
-        db.exec("ROLLBACK");
+        await db.exec("ROLLBACK");
         throw e;
       }
-      res.json(readProfile(req.user.id));
+      res.json(await readProfile(req.user.id));
     },
   );
   app.post(
     "/api/profile/email/test",
     auth,
-    rateLimit({ windowMs: 600000, limit: 3 }),
+    rateLimit({
+      windowMs: 600000,
+      limit: 3,
+    }),
     async (req, res) => {
       if (!emailConfigured())
-        return res
-          .status(503)
-          .json({ error: "Email delivery is not configured." });
-      const profile = ensureProfile(req.user.id);
+        return res.status(503).json({
+          error: "Email delivery is not configured.",
+        });
+      const profile = await ensureProfile(req.user.id);
       if (profile.verified_email !== req.user.email)
-        return res.status(409).json({ error: "Verify your email first." });
-      const id = enqueueSummary(req.user, "test");
+        return res.status(409).json({
+          error: "Verify your email first.",
+        });
+      const id = await enqueueSummary(req.user, "test");
       await runMonthlyEmails();
-      const job = db
+      const job = await db
         .prepare("SELECT status FROM email_outbox WHERE id=?")
         .get(id);
       res.json({
@@ -281,16 +295,16 @@ export function registerProfileRoutes(app, { auth, verifyPassword }) {
       });
     },
   );
-  const parseUnsubscribe = (req) => {
+  const parseUnsubscribe = async (req) => {
     const id = req.query.id || req.body?.id,
       token = req.query.token || req.body?.token;
     const user =
       typeof id === "string" &&
-      db.prepare("SELECT id,email FROM users WHERE id=?").get(id);
+      (await db.prepare("SELECT id,email FROM users WHERE id=?").get(id));
     return user && validUnsubscribe(user, token) ? user : null;
   };
-  app.get("/api/email/unsubscribe", (req, res) => {
-    const user = parseUnsubscribe(req);
+  app.get("/api/email/unsubscribe", async (req, res) => {
+    const user = await parseUnsubscribe(req);
     if (!user)
       return res
         .status(400)
@@ -305,18 +319,25 @@ export function registerProfileRoutes(app, { auth, verifyPassword }) {
   });
   app.post(
     "/api/email/unsubscribe",
-    express.urlencoded({ extended: false, limit: "2kb" }),
-    (req, res) => {
-      const user = parseUnsubscribe(req);
+    express.urlencoded({
+      extended: false,
+      limit: "2kb",
+    }),
+    async (req, res) => {
+      const user = await parseUnsubscribe(req);
       if (!user) return res.status(400).send("Invalid unsubscribe link.");
-      ensureProfile(user.id);
-      db.prepare(
-        "UPDATE profiles SET monthly_enabled=0,next_send_at=NULL WHERE user_id=?",
-      ).run(user.id);
-      db.prepare(
-        "UPDATE email_outbox SET status='cancelled' WHERE user_id=? AND kind='monthly' AND status='queued'",
-      ).run(user.id);
-      audit(user.id, "email.unsubscribed");
+      await ensureProfile(user.id);
+      await db
+        .prepare(
+          "UPDATE profiles SET monthly_enabled=0,next_send_at=NULL WHERE user_id=?",
+        )
+        .run(user.id);
+      await db
+        .prepare(
+          "UPDATE email_outbox SET status='cancelled' WHERE user_id=? AND kind='monthly' AND status='queued'",
+        )
+        .run(user.id);
+      await audit(user.id, "email.unsubscribed");
       res
         .type("html")
         .send(

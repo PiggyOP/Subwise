@@ -61,6 +61,8 @@ GitHub Actions runs the web/backend checks and browser flows. Native builds are 
 
 ## Deploy the full website
 
+For Netlify with persistent PostgreSQL storage, follow [the Netlify deployment guide](docs/NETLIFY.md). The included API and scheduled functions retain data in PostgreSQL rather than the function filesystem. Local SQLite deployment remains supported as described below.
+
 This project includes an authenticated Node backend. **Uploading the repository to GitHub does not deploy a running website.** GitHub Pages alone cannot run the backend, SQLite storage, provider webhooks or scheduled jobs.
 
 Deploy the frontend and backend together on a Node-capable host with HTTPS and persistent storage:
@@ -73,7 +75,7 @@ NODE_ENV=production APP_ORIGIN=https://YOUR_DOMAIN ENABLE_TEST_PLUS=false npm st
 
 Replace `YOUR_DOMAIN` with the real HTTPS origin. Configure `.env` or the host's secret store using `.env.example`. All bank, cancellation, AI, billing and email secrets stay on the server. Browser requests use the same origin under `/api`.
 
-The production server serves the compiled website from `dist/`. Keep the backend running for enabled email and cancellation workers. Deploy one instance with an encrypted persistent SQLite volume; shared database, queue and rate-limit infrastructure is needed before horizontal scaling. Set `TRUST_PROXY=1` only behind one trusted reverse proxy.
+The production server serves the compiled website from `dist/`. Keep the backend running for enabled email and cancellation workers. Deploy one instance with an encrypted persistent SQLite volume; PostgreSQL is supported for shared storage, while shared rate limits and worker capacity still need deployment-specific validation before horizontal scaling. Set `TRUST_PROXY=1` only behind one trusted reverse proxy.
 
 Docker/Compose files are included; they have not been validated by running Docker here. `node scripts/backup.js /YOUR_ENCRYPTED_BACKUP_DIRECTORY` creates a consistent SQLite backup; verify restoration on the deployment platform. Release hardening and provider validation remain listed in [LAUNCH.md](docs/LAUNCH.md).
 

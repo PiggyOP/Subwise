@@ -1,7 +1,5 @@
-import { readFileSync } from "node:fs";
-export const catalog = JSON.parse(
-  readFileSync(new URL("./catalog-data.json", import.meta.url), "utf8"),
-);
+import catalogData from "./catalog-data.json" with { type: "json" };
+export const catalog = catalogData;
 const matches = catalog
   .flatMap((service) => service.aliases.map((alias) => ({ service, alias })))
   .sort((a, b) => b.alias.length - a.alias.length);
