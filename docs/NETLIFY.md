@@ -10,7 +10,7 @@ Set these values in the project's environment variables before deploying:
 - `NODE_ENV=production`
 - `APP_ORIGIN=https://YOUR_SITE.netlify.app`
 - `ENABLE_TEST_PLUS=false`
-- `REQUIRE_PAID_PLAN=false` until membership billing is configured and validated.
+- `REQUIRE_PAID_PLAN=true` to require Plus access. Without a configured payment provider, ordinary accounts remain locked and checkout is unavailable.
 - `TRUST_PROXY=1` for the Netlify proxy.
 
 The database variable must include the Functions scope. Free Netlify accounts can use All scopes rather than upgrading for individual scope selection. Leave financial, cancellation, AI, payment, and email credentials unset until the relevant providers are approved and tested. A PostgreSQL database does not supply financial-provider access.
@@ -40,3 +40,11 @@ Verify live registration, login, account isolation, profile changes, and persist
 For PostgreSQL backups and recovery, configure and test the database provider's backups/restore process. `scripts/backup.js` is only for the local SQLite deployment. Netlify deployment rollback does not roll back PostgreSQL data or schema. Use a separate test database for previews; do not share production credentials with untrusted preview code.
 
 The existing memory-based API rate limits apply within one function instance. Before opening a public financial service, replace them with a shared rate-limit store, and complete the checks in `LAUNCH.md`. Free hosting/database usage remains subject to each provider's limits.
+
+## Private Plus test entitlement
+
+Global test access is disabled on the hosted website. The public UI does not show a free testing unlock. A separate `complimentary_plus` record grants access to the one operator-authorized test account without creating a payment-provider subscription or pretending a payment occurred. Other accounts still require an active, unexpired membership.
+
+For initial provisioning, supply `PLUS_TEST_EMAIL` and `PLUS_TEST_PASSWORD_HASH` as production-only secrets. The password hash uses the application's salted scrypt format, never plaintext. The backend creates or updates that specifically authorized account, invalidates its previous sessions if the credential changes, and grants a private entitlement. Remove both provisioning variables after it has run; the account and entitlement persist in PostgreSQL. Revocation requires removing its `complimentary_plus` row through authorized database administration.
+
+A complimentary member has no paid membership to cancel and cannot start duplicate checkout. Profile, privacy controls, and the service catalog remain available to ordinary accounts. Protected subscription reads and mutation endpoints enforce the membership on the server.

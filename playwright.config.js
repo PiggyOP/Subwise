@@ -9,7 +9,8 @@ export default defineConfig({
     env: {
       APP_ORIGIN: "http://localhost:5174",
       PORT: "3111",
-      ENABLE_TEST_PLUS: "true",
+      ENABLE_TEST_PLUS: "false",
+      REQUIRE_PAID_PLAN: "true",
       API_PORT: "3111",
       // Isolated cancellation tests cannot reach a real merchant/provider.
       CANCELLATION_CONNECTOR_URL: "https://127.0.0.1:9",

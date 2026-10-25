@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { DatabaseSync } from "node:sqlite";
 test("profile belongs to top-right avatar, subscriptions stay first, and saved preferences persist", async ({
   page,
 }) => {
@@ -14,6 +15,18 @@ test("profile belongs to top-right avatar, subscriptions stay first, and saved p
   await page
     .getByRole("button", { name: "Create your account", exact: true })
     .click();
+  await expect(
+    page.getByRole("heading", { name: "Unlock your subscription workspace." }),
+  ).toBeVisible();
+  const user = await (await page.request.get("/api/me")).json();
+  const db = new DatabaseSync("data/browser-tests.sqlite");
+  db.prepare("INSERT OR IGNORE INTO complimentary_plus VALUES(?,?,?)").run(
+    user.id,
+    "browser_fixture",
+    new Date().toISOString(),
+  );
+  db.close();
+  await page.reload();
   await expect(
     page.getByRole("heading", { name: "Make space for clarity" }),
   ).toBeVisible();

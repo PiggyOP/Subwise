@@ -129,7 +129,7 @@ test("authenticated connected-only API, account isolation, test Plus and session
   );
   const dash = await request("/api/dashboard", null, token);
   assert.equal(dash.data.subscriptions.length, 1);
-  assert.equal(dash.data.billing.status, "test_plus");
+  assert.equal(dash.data.billing.status, "active");
   assert.equal(dash.data.integrations.testPlus, true);
   assert.equal((await request("/api/billing/checkout", {}, token)).status, 409);
   assert.equal(

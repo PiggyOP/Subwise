@@ -20,6 +20,7 @@ import {
 } from "./connections.js";
 import { db, audit, subscriptions, databaseMiddleware } from "./db.js";
 import { catalog } from "./catalog.js";
+import { complimentaryPlus, membershipStatus } from "./membership.js";
 import { registerProfileRoutes } from "./profile.js";
 import { startEmailWorker } from "./email.js";
 import {
@@ -35,14 +36,6 @@ const scrypt = promisify(scryptCallback),
 const origin = process.env.APP_ORIGIN || "http://localhost:5173";
 if (prod && !process.env.APP_ORIGIN?.startsWith("https://"))
   throw Error("Production requires HTTPS APP_ORIGIN");
-if (
-  process.env.REQUIRE_PAID_PLAN === "true" &&
-  (!process.env.RAZORPAY_KEY_ID ||
-    !process.env.RAZORPAY_KEY_SECRET ||
-    !process.env.RAZORPAY_PLAN_ID ||
-    !process.env.RAZORPAY_WEBHOOK_SECRET)
-)
-  throw Error("Paid enforcement requires complete Razorpay configuration");
 const testPlus = process.env.ENABLE_TEST_PLUS === "true";
 if (prod && testPlus) throw Error("Test Plus cannot be enabled in production");
 app.disable("x-powered-by");
@@ -287,7 +280,12 @@ registerProfileRoutes(app, {
   verifyPassword,
 });
 async function entitled(userId) {
-  if (testPlus || process.env.REQUIRE_PAID_PLAN !== "true") return true;
+  if (
+    testPlus ||
+    process.env.REQUIRE_PAID_PLAN !== "true" ||
+    (await complimentaryPlus(userId))
+  )
+    return true;
   const row = await db
     .prepare("SELECT * FROM billing WHERE user_id=?")
     .get(userId);
@@ -324,15 +322,8 @@ app.get("/api/dashboard", auth, async (req, res) =>
           .all(req.user.id)
       : [],
     billing: testPlus
-      ? {
-          status: "test_plus",
-          test: true,
-        }
-      : (await db
-          .prepare("SELECT status,period_end FROM billing WHERE user_id=?")
-          .get(req.user.id)) || {
-          status: "unsubscribed",
-        },
+      ? { status: "active", complimentary: true }
+      : await membershipStatus(req.user.id),
     integrations: {
       bank: {
         available: connectorAvailable("card"),
@@ -360,12 +351,7 @@ app.get("/api/dashboard", auth, async (req, res) =>
   }),
 );
 async function paid(req, res, next) {
-  if (testPlus || process.env.REQUIRE_PAID_PLAN !== "true") return next();
-  const plan = await db
-    .prepare("SELECT * FROM billing WHERE user_id=?")
-    .get(req.user.id);
-  if (plan?.status === "active" && plan.period_end * 1000 > Date.now())
-    return next();
+  if (await entitled(req.user.id)) return next();
   res.status(402).json({
     error:
       "An active Subwise Plus subscription is required. Open Settings → Membership.",
@@ -593,9 +579,9 @@ async function razorpay(path, body) {
   return r.json();
 }
 app.post("/api/billing/checkout", auth, async (req, res) => {
-  if (testPlus)
+  if (testPlus || (await complimentaryPlus(req.user.id)))
     return res.status(409).json({
-      error: "Plus is unlocked for testing. No payment is required.",
+      error: "This account already has complimentary Plus access.",
     });
   if (
     !process.env.RAZORPAY_KEY_ID ||
@@ -638,6 +624,11 @@ app.post("/api/billing/checkout", auth, async (req, res) => {
   });
 });
 app.post("/api/billing/cancel", auth, async (req, res) => {
+  if (await complimentaryPlus(req.user.id))
+    return res.status(409).json({
+      error:
+        "This account has complimentary Plus access and no paid membership to cancel.",
+    });
   const row = await db
     .prepare("SELECT * FROM billing WHERE user_id=?")
     .get(req.user.id);

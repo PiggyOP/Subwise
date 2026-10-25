@@ -72,7 +72,7 @@ test("120-service catalog has working local brand assets, search and category fi
     page.getByRole("heading", { name: "JioHotstar", exact: true }),
   ).toBeVisible();
 });
-test("phone registration unlocks test Plus and has no manual creation/import", async ({
+test("phone registration requires Plus and has no free testing bypass", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -88,7 +88,7 @@ test("phone registration unlocks test Plus and has no manual creation/import", a
     .getByRole("button", { name: "Create your account", exact: true })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Make space for clarity" }),
+    page.getByRole("heading", { name: "Unlock your subscription workspace." }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Add subscription", exact: true }),
@@ -96,21 +96,17 @@ test("phone registration unlocks test Plus and has no manual creation/import", a
   await expect(
     page.getByRole("button", { name: "Import statement", exact: true }),
   ).toHaveCount(0);
-  await page
-    .getByRole("button", { name: "Connect card or UPI", exact: true })
-    .first()
-    .click();
   await expect(
-    page.getByRole("heading", { name: "Connect UPI", exact: true }),
-  ).toBeVisible();
+    page.getByRole("button", { name: "Connect card or UPI", exact: true }),
+  ).toHaveCount(0);
   await page.reload();
   await page.locator(".mobile-menu").click();
   await page.getByRole("button", { name: "Settings", exact: true }).click();
   await expect(
-    page.getByText("Plus unlocked for testing", { exact: true }),
+    page.getByRole("heading", { name: "Meet Subwise Plus" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Plus is unlocked — no payment needed" }),
+    page.getByRole("button", { name: "Checkout not configured" }),
   ).toBeDisabled();
   expect(
     await page.evaluate(

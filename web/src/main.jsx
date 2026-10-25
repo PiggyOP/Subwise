@@ -29,6 +29,7 @@ import {
   ExternalLink,
   Trash2,
   UserRound,
+  LockKeyhole,
 } from "lucide-react";
 import "./style.css";
 import Profile from "./Profile";
@@ -134,13 +135,12 @@ function App() {
       subscriptions: samples,
       transactions: [],
       audit: [],
-      billing: { status: "test_plus", test: true },
+      billing: { status: "active", complimentary: true },
       integrations: {
         bank: { available: false },
         upi: { available: false },
         ai: { available: false },
         billing: { available: false },
-        testPlus: true,
       },
     });
   }
@@ -322,7 +322,12 @@ function App() {
           ))}
         </nav>
         <div className="navlabel second">YOUR COPILOT</div>
-        <button className="navitem" onClick={() => setAssistant(true)}>
+        <button
+          className="navitem"
+          onClick={() =>
+            data.access === false ? setPage("Settings") : setAssistant(true)
+          }
+        >
           <Sparkles size={19} />
           Subwise AI <span className="new">NEW</span>
         </button>
@@ -340,8 +345,8 @@ function App() {
               superpowers with Plus.
             </p>
             <button onClick={() => setPage("Settings")}>
-              {data.integrations.testPlus
-                ? "Plus unlocked · testing"
+              {data.billing.status === "active"
+                ? "Your Plus membership"
                 : "Explore Plus"}{" "}
               <Check size={16} />
             </button>
@@ -381,8 +386,8 @@ function App() {
           </div>
           <div className="headeractions">
             <span className="pill">
-              {data.integrations.testPlus
-                ? "Plus · test access"
+              {data.billing.status === "active"
+                ? "Subwise Plus"
                 : "Personal account"}
             </span>
             <span className="secure">
@@ -424,17 +429,6 @@ function App() {
               </button>
             </div>
           )}
-          {data.access === false && (
-            <div className="samplebar">
-              <span>
-                Your membership is inactive. Subscribe to access your
-                subscription workspace.
-              </span>
-              <button onClick={() => setPage("Settings")}>
-                Open membership settings <ArrowRight size={14} />
-              </button>
-            </div>
-          )}
           <div className="pageheading">
             <div>
               <div className="eyebrow">YOUR MONEY, A LITTLE MORE MINDFUL</div>
@@ -465,132 +459,168 @@ function App() {
                           : "A clear view of what you pay for, and when."}
               </p>
             </div>
-            {["Overview", "Subscriptions"].includes(page) && (
-              <button className="primary" onClick={() => setPage("Accounts")}>
-                <Link2 size={16} />
-                Connect card or UPI
-              </button>
-            )}
+            {data.access !== false &&
+              ["Overview", "Subscriptions"].includes(page) && (
+                <button className="primary" onClick={() => setPage("Accounts")}>
+                  <Link2 size={16} />
+                  Connect card or UPI
+                </button>
+              )}
           </div>
-          {["Overview", "Subscriptions"].includes(page) && (
-            <section className="panel subscriptions">
-              <div className="panelhead">
-                <div>
-                  <h2>
-                    {page === "Overview"
-                      ? "Your subscriptions"
-                      : "Subscription manager"}{" "}
-                    <span className="numberbadge">{subs.length}</span>
-                  </h2>
-                  <p>Good things, all in one place.</p>
+          {data.access === false &&
+            ["Overview", "Subscriptions", "Accounts"].includes(page) && (
+              <section className="panel plus-gate">
+                <div className="plus-gate-icon">
+                  <LockKeyhole size={24} />
                 </div>
-                <div className="tabletools">
-                  <label className="search">
-                    <Search size={16} />
-                    <input
-                      aria-label="Search subscriptions"
-                      placeholder="Search subscriptions"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                    />
-                  </label>
-                  <select
-                    aria-label="Filter category"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                  >
-                    <option>All</option>
-                    {categories.map((c) => (
-                      <option key={c}>{c}</option>
-                    ))}
-                  </select>
+                <span className="eyebrow">SUBWISE PLUS</span>
+                <h2>Unlock your subscription workspace.</h2>
+                <p>
+                  A Plus membership is required to connect accounts, track
+                  recurring payments, and use your AI assistant.
+                </p>
+                <button className="primary" onClick={() => setPage("Settings")}>
+                  View Plus membership <ArrowRight size={16} />
+                </button>
+                {!data.integrations.billing.available && (
+                  <small>
+                    Membership checkout is awaiting payment-provider setup.
+                  </small>
+                )}
+              </section>
+            )}
+          {data.access !== false &&
+            ["Overview", "Subscriptions"].includes(page) && (
+              <section className="panel subscriptions">
+                <div className="panelhead">
+                  <div>
+                    <h2>
+                      {page === "Overview"
+                        ? "Your subscriptions"
+                        : "Subscription manager"}{" "}
+                      <span className="numberbadge">{subs.length}</span>
+                    </h2>
+                    <p>Good things, all in one place.</p>
+                  </div>
+                  <div className="tabletools">
+                    <label className="search">
+                      <Search size={16} />
+                      <input
+                        aria-label="Search subscriptions"
+                        placeholder="Search subscriptions"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                      />
+                    </label>
+                    <select
+                      aria-label="Filter category"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                    >
+                      <option>All</option>
+                      {categories.map((c) => (
+                        <option key={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div className="tablewrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>SUBSCRIPTION</th>
-                      <th>CATEGORY</th>
-                      <th>AMOUNT</th>
-                      <th>NEXT PAYMENT</th>
-                      <th>STATUS</th>
-                      <th />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.map((s) => (
-                      <tr key={s.id} onClick={() => manage(s)}>
-                        <td>
-                          <div className="service">
-                            {brand(s.name)}
-                            <div>
-                              <b>{s.name}</b>
-                              <small>
-                                {s.source === "upi"
-                                  ? "Detected via UPI"
-                                  : "Detected via card"}
-                              </small>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <span className="tag">{s.category}</span>
-                        </td>
-                        <td>
-                          <b>{money(s.amount)}</b>
-                          <small>
-                            {" "}
-                            /{" "}
-                            {s.cadence === "monthly"
-                              ? "month"
-                              : s.cadence === "yearly"
-                                ? "year"
-                                : "week"}
-                          </small>
-                        </td>
-                        <td>{date(s.next_date)}</td>
-                        <td>
-                          <span className={"status " + s.status}>
-                            <i />
-                            {s.status === "cancellation_requested"
-                              ? "Requested"
-                              : s.status === "cancelled"
-                                ? "Cancelled"
-                                : s.status === "needs_review"
-                                  ? "Review"
-                                  : "Active"}
-                          </span>
-                        </td>
-                        <td>
-                          <button
-                            className="iconbutton"
-                            aria-label={"Manage " + s.name}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              manage(s);
-                            }}
-                          >
-                            <ArrowUpRight size={17} />
-                          </button>
-                        </td>
+                <div className="tablewrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>SUBSCRIPTION</th>
+                        <th>CATEGORY</th>
+                        <th>AMOUNT</th>
+                        <th>NEXT PAYMENT</th>
+                        <th>STATUS</th>
+                        <th />
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {!filtered.length && (
-                <div className="empty">
-                  <Layers size={30} />
-                  <h3>
-                    {query
-                      ? "No matching subscriptions"
-                      : "Make space for clarity"}
-                  </h3>
-                  <p>
-                    Connect a supported card or UPI account. Monthly and yearly
-                    subscriptions appear automatically.
-                  </p>
+                    </thead>
+                    <tbody>
+                      {filtered.map((s) => (
+                        <tr key={s.id} onClick={() => manage(s)}>
+                          <td>
+                            <div className="service">
+                              {brand(s.name)}
+                              <div>
+                                <b>{s.name}</b>
+                                <small>
+                                  {s.source === "upi"
+                                    ? "Detected via UPI"
+                                    : "Detected via card"}
+                                </small>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <span className="tag">{s.category}</span>
+                          </td>
+                          <td>
+                            <b>{money(s.amount)}</b>
+                            <small>
+                              {" "}
+                              /{" "}
+                              {s.cadence === "monthly"
+                                ? "month"
+                                : s.cadence === "yearly"
+                                  ? "year"
+                                  : "week"}
+                            </small>
+                          </td>
+                          <td>{date(s.next_date)}</td>
+                          <td>
+                            <span className={"status " + s.status}>
+                              <i />
+                              {s.status === "cancellation_requested"
+                                ? "Requested"
+                                : s.status === "cancelled"
+                                  ? "Cancelled"
+                                  : s.status === "needs_review"
+                                    ? "Review"
+                                    : "Active"}
+                            </span>
+                          </td>
+                          <td>
+                            <button
+                              className="iconbutton"
+                              aria-label={"Manage " + s.name}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                manage(s);
+                              }}
+                            >
+                              <ArrowUpRight size={17} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {!filtered.length && (
+                  <div className="empty">
+                    <Layers size={30} />
+                    <h3>
+                      {query
+                        ? "No matching subscriptions"
+                        : "Make space for clarity"}
+                    </h3>
+                    <p>
+                      Connect a supported card or UPI account. Monthly and
+                      yearly subscriptions appear automatically.
+                    </p>
+                    <button
+                      className="primary"
+                      onClick={() => setPage("Accounts")}
+                    >
+                      <Link2 size={16} />
+                      Connect card or UPI
+                    </button>
+                  </div>
+                )}
+                <div className="tablefooter">
+                  <ShieldCheck size={14} /> Your subscriptions are visible only
+                  in your account.
                   <button
                     className="primary"
                     onClick={() => setPage("Accounts")}
@@ -599,18 +629,9 @@ function App() {
                     Connect card or UPI
                   </button>
                 </div>
-              )}
-              <div className="tablefooter">
-                <ShieldCheck size={14} /> Your subscriptions are visible only in
-                your account.
-                <button className="primary" onClick={() => setPage("Accounts")}>
-                  <Link2 size={16} />
-                  Connect card or UPI
-                </button>
-              </div>
-            </section>
-          )}
-          {page === "Overview" && (
+              </section>
+            )}
+          {data.access !== false && page === "Overview" && (
             <>
               <div className="stats">
                 <div className="stat mainstat">
@@ -843,7 +864,13 @@ function App() {
                   <h2>Less admin. More peace of mind.</h2>
                   <p>Understand your subscriptions. Plan your next move.</p>
                 </div>
-                <button onClick={() => setAssistant(true)}>
+                <button
+                  onClick={() =>
+                    data.access === false
+                      ? setPage("Settings")
+                      : setAssistant(true)
+                  }
+                >
                   Meet your assistant <ArrowUpRight size={16} />
                 </button>
                 <span className="bannerorb" />
@@ -908,7 +935,7 @@ function App() {
               </div>
             </>
           )}
-          {page === "Accounts" && (
+          {data.access !== false && page === "Accounts" && (
             <>
               <div className="connectionhero">
                 <div>
@@ -1623,9 +1650,7 @@ function SettingsPage({ data, demo, notify, refresh, onDelete }) {
       <section
         className={
           "panel membership" +
-          (data.billing.status === "active" || data.integrations.testPlus
-            ? " is-member"
-            : "") +
+          (data.billing.status === "active" ? " is-member" : "") +
           (busy ? " is-pending" : "")
         }
         aria-busy={busy}
@@ -1639,13 +1664,15 @@ function SettingsPage({ data, demo, notify, refresh, onDelete }) {
           assistant in one membership.
         </p>
         <div className="planprice">
-          {data.integrations.testPlus
-            ? "Plus unlocked for testing"
+          {data.billing.status === "active"
+            ? "Subwise Plus is active"
             : "Provider-configured pricing"}
         </div>
         <p>
-          {data.integrations.testPlus
-            ? "Testing access includes all Plus features with no charge. Financial connections and AI still require configured providers."
+          {data.billing.status === "active"
+            ? data.billing.complimentary
+              ? "This account has complimentary Plus access. Financial connections and AI require configured providers."
+              : "Your Plus membership is active."
             : "Review the exact amount and billing interval in secure Razorpay checkout. Financial features depend on supported providers."}
         </p>
         <ul>
@@ -1670,16 +1697,18 @@ function SettingsPage({ data, demo, notify, refresh, onDelete }) {
           <p>
             Membership:{" "}
             <b>
-              {data.integrations.testPlus
-                ? "Plus · test access"
+              {data.billing.status === "active"
+                ? "active"
                 : data.billing.status}
             </b>
             {data.integrations.paidGate
               ? " · Paid access required"
               : " · Paid access enforcement is currently off"}
             .{" "}
-            {data.integrations.testPlus
-              ? "No payment is needed during testing."
+            {data.billing.status === "active"
+              ? data.billing.complimentary
+                ? "Complimentary access is enabled for this account."
+                : "Your membership is active."
               : data.integrations.billing.available
                 ? "Checkout is connected."
                 : "Checkout awaits payment-provider setup."}
@@ -1689,21 +1718,21 @@ function SettingsPage({ data, demo, notify, refresh, onDelete }) {
           className="primary wide"
           disabled={
             busy ||
-            data.integrations.testPlus ||
+            data.billing.status === "active" ||
             !data.integrations.billing.available
           }
           onClick={checkout}
         >
           {busy
             ? "Opening checkout…"
-            : data.integrations.testPlus
-              ? "Plus is unlocked — no payment needed"
+            : data.billing.status === "active"
+              ? "Plus is active"
               : data.integrations.billing.available
                 ? "Open secure checkout"
                 : "Checkout not configured"}
           <ArrowUpRight size={16} />
         </button>
-        {data.billing.status === "active" && (
+        {data.billing.status === "active" && !data.billing.complimentary && (
           <button
             className="textbutton wide"
             onClick={async () => {

@@ -2,7 +2,7 @@
 
 This file records actual gaps in the delivered system. Passing local tests does not establish production readiness.
 
-A connected-only card/UPI adapter contract and signed ingestion engine are now implemented. This does not supply an approved provider integration. Manual additions and CSV imports are removed. Plus is unlocked only in development testing and production refuses the override.
+A connected-only card/UPI adapter contract and signed ingestion engine are now implemented. This does not supply an approved provider integration. Manual additions and CSV imports are removed. The production Plus barrier is enabled. A private complimentary entitlement can grant an individually authorized test account access; production refuses the global testing override. Paid checkout still requires a configured payment provider.
 
 ## External access required
 

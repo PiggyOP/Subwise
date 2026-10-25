@@ -41,6 +41,11 @@ test("mobile cancellation authorizes once, tracks progress and shows signed prov
   db.prepare(
     "INSERT INTO subscriptions(id,user_id,name,amount,cadence,next_date,category,payment,source,created) VALUES(?,?,'Test provider subscription',12900,'monthly','2026-11-05','Other','Card','card',?)",
   ).run(id, user.id, new Date().toISOString());
+  db.prepare("INSERT OR IGNORE INTO complimentary_plus VALUES(?,?,?)").run(
+    user.id,
+    "browser_fixture",
+    new Date().toISOString(),
+  );
   db.close();
   await signedEvent(page, {
     id: randomUUID(),

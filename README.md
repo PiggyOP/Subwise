@@ -37,7 +37,7 @@ The website, account storage, catalog, calculations, profile preferences and aut
 
 Automatic cancellation is available only when a merchant-authorized integration supplies a valid subscription-specific permission. A request stays pending until confirmed. No manual "I cancelled" shortcut is treated as proof. No real merchant subscription has been cancelled during development.
 
-AI, billing and email delivery require their own server credentials. Email verification is optional for sign-in, and monthly emails require a verified address and opt-in. Plus is unlocked only for explicitly configured local testing.
+AI, billing and email delivery require their own server credentials. Email verification is optional for sign-in, and monthly emails require a verified address and opt-in. The hosted website requires Plus access, with individually granted complimentary access for an authorized test account. Public paid checkout still requires approved billing credentials.
 
 Implementation and setup details:
 
