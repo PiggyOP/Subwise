@@ -1,0 +1,209 @@
+import { createHash } from "node:crypto";
+
+// Deliberately sandbox-only. Live AA access needs a separately approved rollout.
+const apiOrigin = "https://fiu-sandbox.setu.co";
+export class SetuError extends Error {
+  constructor(status, code, traceId) {
+    super(`Setu sandbox request failed (${status}, ${code})`);
+    this.status = status;
+    this.code = /^[a-zA-Z0-9_-]{1,80}$/.test(code || "")
+      ? code
+      : "ProviderError";
+    this.traceId = /^[a-zA-Z0-9_-]{1,100}$/.test(traceId || "")
+      ? traceId
+      : null;
+  }
+}
+export function setuConfigured(env = process.env) {
+  return (
+    env.SETU_SANDBOX_ENABLED === "true" &&
+    !!(
+      env.SETU_CLIENT_ID &&
+      env.SETU_CLIENT_SECRET &&
+      env.SETU_PRODUCT_ID &&
+      env.SETU_SANDBOX_EMAILS &&
+      env.SETU_WEBHOOK_TOKEN?.length >= 32
+    )
+  );
+}
+export function setuAllowed(user, env = process.env) {
+  return (
+    setuConfigured(env) &&
+    (env.SETU_SANDBOX_EMAILS || "")
+      .split(",")
+      .some((email) => email.trim().toLowerCase() === user.email.toLowerCase())
+  );
+}
+export function consentRequest(
+  origin,
+  now = new Date(),
+  mobile = "9999999999",
+) {
+  const from = new Date(now.getTime() - 89 * 86400000);
+  return {
+    // No forced AA handle: the product's sandbox gateway selects its configured AA.
+    vua: mobile,
+    consentDuration: { unit: "MONTH", value: 1 },
+    dataRange: { from: from.toISOString(), to: now.toISOString() },
+    purpose: {
+      code: "102",
+      refUri: "https://api.rebit.org.in/aa/purpose/102.xml",
+      text: "Customer spending and budget analysis",
+      category: { type: "Personal finance" },
+    },
+    fiTypes: ["DEPOSIT"],
+    consentTypes: ["TRANSACTIONS"],
+    fetchType: "PERIODIC",
+    frequency: { unit: "DAY", value: 1 },
+    consentMode: "STORE",
+    dataLife: { unit: "MONTH", value: 1 },
+    redirectUrl: origin + "/?connection_return=1",
+    context: [],
+  };
+}
+export function consentURL(value) {
+  const url = new URL(value);
+  if (
+    url.protocol !== "https:" ||
+    !["fiu-sandbox.setu.co", "fiu-uat.setu.co"].includes(url.hostname) ||
+    url.port ||
+    url.username ||
+    url.password
+  )
+    throw new SetuError(502, "InvalidAuthorizationURL");
+  return url.href;
+}
+export function makeSetuClient({ env = process.env, fetchImpl = fetch } = {}) {
+  let token,
+    expires = 0;
+  async function json(url, options) {
+    const r = await fetchImpl(url, {
+      ...options,
+      redirect: "error",
+      signal: AbortSignal.timeout(5000),
+    });
+    if (Number(r.headers.get("content-length")) > 8 * 1024 * 1024)
+      throw new SetuError(502, "ResponseTooLarge");
+    const text = await r.text();
+    if (text.length > 8 * 1024 * 1024)
+      throw new SetuError(502, "ResponseTooLarge");
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      const error = new SetuError(r.status, "NonJSONResponse");
+      error.endpoint = new URL(url).hostname;
+      throw error;
+    }
+    if (!r.ok)
+      throw new SetuError(
+        r.status,
+        data.errorCode || "ProviderError",
+        data.traceId,
+      );
+    return data;
+  }
+  async function login() {
+    if (token && expires > Date.now()) return token;
+    const data = await json("https://orgservice-prod.setu.co/v1/users/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", client: "bridge" },
+      body: JSON.stringify({
+        clientID: env.SETU_CLIENT_ID,
+        secret: env.SETU_CLIENT_SECRET,
+        grant_type: "client_credentials",
+      }),
+    });
+    if (typeof data.access_token !== "string")
+      throw new SetuError(502, "MissingAccessToken");
+    token = data.access_token;
+    let exp;
+    try {
+      exp =
+        JSON.parse(Buffer.from(token.split(".")[1], "base64url")).exp * 1000;
+    } catch {}
+    expires = Math.min(
+      Number.isFinite(exp) ? exp - 60000 : Infinity,
+      Date.now() + 5 * 60000,
+    );
+    return token;
+  }
+  return {
+    async request(path, body) {
+      if (!/^\/v2\/(consents|sessions)(\/[-a-zA-Z0-9/]+)?$/.test(path))
+        throw Error("Invalid Setu path");
+      // Retry only a rejected token. Never automatically replay a timed-out consent/session POST.
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          return await json(apiOrigin + path, {
+            method: body === undefined ? "GET" : "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + (await login()),
+              "x-product-instance-id": env.SETU_PRODUCT_ID,
+            },
+            ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+          });
+        } catch (e) {
+          if (e.status !== 401 || attempt) throw e;
+          token = null;
+        }
+      }
+    },
+  };
+}
+function paise(value) {
+  const match = /^(\d{1,7})(?:\.(\d{1,2}))?$/.exec(String(value ?? "").trim());
+  if (!match) return null;
+  const n = Number(match[1]) * 100 + Number((match[2] || "").padEnd(2, "0"));
+  return n > 0 && n <= 100000000 ? n : null;
+}
+export function normalizeSetuTransactions(session) {
+  const rows = new Map();
+  for (const fip of session.fips || []) {
+    for (const item of fip.accounts || []) {
+      if (
+        !["READY", "DELIVERED"].includes(
+          item.status || item.FIstatus || item.FIStatus,
+        )
+      )
+        continue;
+      const account = item.data?.account;
+      if (!account || account.type?.toLowerCase() !== "deposit") continue;
+      if (account.summary?.currency && account.summary.currency !== "INR")
+        continue;
+      const values = account.transactions?.transaction || [];
+      for (const t of Array.isArray(values) ? values : [values]) {
+        if (String(t.type).toUpperCase() !== "DEBIT") continue;
+        const amount = paise(t.amount),
+          date = String(t.transactionTimestamp || t.valueDate || "").slice(
+            0,
+            10,
+          );
+        const merchant = String(t.narration || "")
+          .trim()
+          .slice(0, 200);
+        if (
+          !amount ||
+          !merchant ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+          !Number.isFinite(Date.parse(date)) ||
+          new Date(date).toISOString().slice(0, 10) !== date
+        )
+          continue;
+        const id = createHash("sha256")
+          .update(
+            JSON.stringify([
+              fip.fipID,
+              item.linkRefNumber,
+              t.txnId || t.reference || [date, amount, merchant],
+            ]),
+          )
+          .digest("hex");
+        rows.set(id, { id, merchant, amount, date, currency: "INR" });
+        if (rows.size > 10000) throw new SetuError(502, "TooManyTransactions");
+      }
+    }
+  }
+  return [...rows.values()];
+}

@@ -22,7 +22,7 @@ import {
   Menu,
   CalendarDays,
   Link2,
-  CreditCard,
+  Landmark,
   Command,
   Send,
   CheckCircle2,
@@ -34,6 +34,7 @@ import {
 import "./style.css";
 import Profile from "./Profile";
 import Cancellation from "./Cancellation";
+import SetuSandbox from "./SetuSandbox";
 import { ThemeProvider, ThemeToggle } from "./theme";
 const money = (n) =>
   new Intl.NumberFormat("en-IN", {
@@ -86,7 +87,11 @@ function App() {
     [catalog, setCatalog] = useState([]),
     [data, setData] = useState(null),
     [demo, setDemo] = useState(false),
-    [page, setPage] = useState("Overview"),
+    [page, setPage] = useState(
+      new URLSearchParams(window.location.search).has("connection_return")
+        ? "Accounts"
+        : "Overview",
+    ),
     [modal, setModal] = useState(null),
     [selected, setSelected] = useState(null),
     [toast, setToast] = useState(""),
@@ -232,19 +237,6 @@ function App() {
       </span>
     );
   };
-  async function startConnection(channel) {
-    if (demo) {
-      setSelected({ channel });
-      setModal("connect");
-      return;
-    }
-    try {
-      const r = await api("/connections", { channel });
-      window.location.assign(r.authorizationUrl);
-    } catch (e) {
-      notify(e.message);
-    }
-  }
   useEffect(() => {
     if (selected && data) {
       const current = data.subscriptions.find((s) => s.id === selected.id);
@@ -429,6 +421,15 @@ function App() {
               </button>
             </div>
           )}
+          {data.connections?.some((c) => c.channel === "bank") && (
+            <div className="notice" role="status">
+              <ShieldCheck size={18} />
+              <p>
+                Setu sandbox · This workspace includes test bank data. Sandbox
+                transactions and spending totals are not your real finances.
+              </p>
+            </div>
+          )}
           <div className="pageheading">
             <div>
               <div className="eyebrow">YOUR MONEY, A LITTLE MORE MINDFUL</div>
@@ -463,7 +464,7 @@ function App() {
               ["Overview", "Subscriptions"].includes(page) && (
                 <button className="primary" onClick={() => setPage("Accounts")}>
                   <Link2 size={16} />
-                  Connect card or UPI
+                  Connect bank
                 </button>
               )}
           </div>
@@ -606,15 +607,15 @@ function App() {
                         : "Make space for clarity"}
                     </h3>
                     <p>
-                      Connect a supported card or UPI account. Monthly and
-                      yearly subscriptions appear automatically.
+                      Connect a supported bank account. Monthly and yearly
+                      subscriptions appear automatically.
                     </p>
                     <button
                       className="primary"
                       onClick={() => setPage("Accounts")}
                     >
                       <Link2 size={16} />
-                      Connect card or UPI
+                      Connect bank
                     </button>
                   </div>
                 )}
@@ -626,7 +627,7 @@ function App() {
                     onClick={() => setPage("Accounts")}
                   >
                     <Link2 size={16} />
-                    Connect card or UPI
+                    Connect bank
                   </button>
                 </div>
               </section>
@@ -795,7 +796,7 @@ function App() {
                         })
                       ) : (
                         <p>
-                          Connect card or UPI to see
+                          Connect bank to see
                           <br />
                           where your money goes.
                         </p>
@@ -811,7 +812,7 @@ function App() {
                           spending. A quick review can help keep it intentional.
                         </>
                       ) : (
-                        "Your spending picture starts with a supported card or UPI connection."
+                        "Your spending picture starts with a supported bank connection."
                       )}
                     </p>
                   </div>
@@ -927,7 +928,7 @@ function App() {
                           onClick={() => setPage("Accounts")}
                         >
                           <Link2 size={16} />
-                          Connect card or UPI
+                          Connect bank
                         </button>
                       </div>
                     </div>
@@ -942,7 +943,7 @@ function App() {
                   <span className="eyebrow">
                     AUTOMATIC, FROM THE FIRST CONNECTION
                   </span>
-                  <h2>Your card. Your UPI. One clear picture.</h2>
+                  <h2>Your bank. One clear picture.</h2>
                   <p>
                     Connect a supported payment account to read recurring
                     charges automatically.
@@ -958,7 +959,7 @@ function App() {
                   </span>
                 </div>
                 <div className="connectionart">
-                  <CreditCard size={64} />
+                  <Landmark size={64} />
                   <span>
                     <ShieldCheck size={27} />
                   </span>
@@ -980,50 +981,22 @@ function App() {
                   See monthly & yearly plans
                 </span>
               </div>
-              <div className="accountsgrid twoaccounts">
-                {[
-                  {
-                    channel: "card",
-                    title: "Connect your card",
-                    Icon: CreditCard,
-                    text: "Authorize a supported issuer or transaction-data provider. Subwise reads recurring card charges without storing your card number or CVV.",
-                    available: data.integrations.bank.available,
-                  },
-                  {
-                    channel: "upi",
-                    title: "Connect UPI",
-                    Icon: Link2,
-                    text: "Authorize a supported UPI provider to share permitted payment history. Mandate management needs a supported PSP and confirmation in your UPI app.",
-                    available: data.integrations.upi.available,
-                  },
-                ].map(({ channel, title, Icon, text, available }) => (
-                  <section className="panel accountcard" key={channel}>
-                    <Icon size={29} />
-                    <h2>{title}</h2>
-                    <p>{text}</p>
-                    <span
-                      className={
-                        "status " +
-                        (available ? "active" : "cancellation_requested")
-                      }
-                    >
-                      <i />
-                      {available
-                        ? "Provider configured"
-                        : "Provider setup required"}
+              <div className="accountsgrid">
+                {data.integrations.setu?.available ? (
+                  <SetuSandbox api={api} refresh={refresh} notify={notify} />
+                ) : (
+                  <section className="panel accountcard">
+                    <Landmark size={29} />
+                    <h2>Bank connection</h2>
+                    <p>
+                      Bank tracking is being tested with Setu’s sandbox. Real
+                      bank connections are not available yet.
+                    </p>
+                    <span className="status needs_review">
+                      Sandbox testing in progress
                     </span>
-                    <button
-                      className="primary wide"
-                      onClick={() => {
-                        setSelected({ channel });
-                        setModal("connect");
-                      }}
-                    >
-                      {title}
-                      <ArrowUpRight size={16} />
-                    </button>
                   </section>
-                ))}
+                )}
               </div>
               <section className="panel activity">
                 <h2>What Subwise reads</h2>
@@ -1036,9 +1009,9 @@ function App() {
                 <div className="notice">
                   <ShieldCheck size={18} />
                   <p>
-                    Automatic tracking is unavailable until an approved provider
-                    is configured. A card number or UPI ID alone cannot grant
-                    access to payment history.
+                    Bank data is shared only after provider approval. Sandbox
+                    records are sample data and do not represent your real
+                    spending.
                   </p>
                 </div>
               </section>
@@ -1248,63 +1221,6 @@ function App() {
                 )}
               </>
             )}
-            {modal === "connect" && (
-              <>
-                <span className="eyebrow">
-                  YOU AUTHORIZE. SUBWISE ORGANIZES.
-                </span>
-                <h2>
-                  {selected?.channel === "upi"
-                    ? "Connect your UPI account"
-                    : "Connect your card securely"}
-                </h2>
-                <p>
-                  You'll authorize read access with a supported provider.
-                  Subwise will use permitted payment history to identify monthly
-                  and yearly subscriptions.
-                </p>
-                <div className="notice">
-                  <ShieldCheck size={20} />
-                  <p>
-                    {(
-                      selected?.channel === "upi"
-                        ? data.integrations.upi.available
-                        : data.integrations.bank.available
-                    )
-                      ? "A provider is configured. Continue to its secure authorization screen."
-                      : "No approved provider is connected yet. Automatic tracking cannot start until provider access is configured. Do not enter card numbers, CVVs, OTPs, or a UPI PIN into Subwise."}
-                  </p>
-                </div>
-                <ol className="connectionsteps">
-                  <li>
-                    Choose and authorize your supported account with the
-                    provider.
-                  </li>
-                  <li>
-                    Read-only transaction history is shared under your consent.
-                  </li>
-                  <li>
-                    Subwise detects monthly and yearly recurring charges
-                    automatically.
-                  </li>
-                </ol>
-                <button
-                  className="primary wide"
-                  disabled={
-                    !(selected?.channel === "upi"
-                      ? data.integrations.upi.available
-                      : data.integrations.bank.available)
-                  }
-                  onClick={() => startConnection(selected?.channel || "card")}
-                >
-                  Continue to secure provider <ArrowRight size={16} />
-                </button>
-                <p className="muted">
-                  No account is marked connected until a verified provider
-                  confirmation arrives.
-                </p>
-              </>
-            )}
           </section>
         </div>
       )}
@@ -1480,8 +1396,8 @@ function Auth({ onDone, onDemo }) {
           Explore the sample workspace <ArrowUpRight size={16} />
         </button>
         <p className="privacyfine">
-          Connect supported card and UPI providers to automatically read
-          subscriptions. Provider setup is required before live tracking.
+          Connect a supported bank provider to automatically read subscriptions.
+          Provider setup is required before live tracking.
         </p>
       </section>
     </div>
@@ -1753,8 +1669,8 @@ function SettingsPage({ data, demo, notify, refresh, onDelete }) {
         <ShieldCheck size={28} />
         <h2>Your data belongs to you.</h2>
         <p>
-          We store recurring payments from authorized card and UPI feeds. No
-          bank passwords, card numbers, OTPs, or UPI PINs are needed.
+          We store recurring payments from authorized bank feeds. No bank
+          passwords, card numbers, OTPs, or UPI PINs are needed.
         </p>
         <button
           className="secondary wide"

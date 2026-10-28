@@ -1,9 +1,4 @@
-import {
-  createHmac,
-  timingSafeEqual,
-  randomUUID,
-  createHash,
-} from "node:crypto";
+import { createHmac, timingSafeEqual, randomUUID } from "node:crypto";
 import express from "express";
 import { z } from "zod";
 import { db, audit } from "./db.js";
@@ -123,154 +118,7 @@ export function registerFinancialWebhook(app) {
         return res.status(400).json({
           error: "Transactions require active consent",
         });
-      await db.exec("BEGIN IMMEDIATE");
-      try {
-        let added = 0;
-        for (const t of event.transactions)
-          added += Number(
-            (
-              await db
-                .prepare(
-                  "INSERT OR IGNORE INTO provider_transactions VALUES(?,?,?,?,?,?)",
-                )
-                .run(
-                  connection.id,
-                  t.id,
-                  t.merchant,
-                  t.amount,
-                  t.date,
-                  t.currency,
-                )
-            ).changes,
-          );
-        await db
-          .prepare("UPDATE connections SET status=?,last_sync=? WHERE id=?")
-          .run(event.status, new Date().toISOString(), connection.id);
-        if (event.status === "connected") {
-          const all = await db
-            .prepare(
-              "SELECT merchant,amount,date FROM provider_transactions WHERE connection_id=?",
-            )
-            .all(connection.id);
-          for (const found of detectRecurring(all).filter(
-            (r) =>
-              ["monthly", "yearly"].includes(r.cadence) &&
-              !event.recurring.some(
-                (stream) =>
-                  (identify(stream.merchant)?.id ||
-                    stream.merchant.toLowerCase()) ===
-                  (identify(r.name)?.id || r.name.toLowerCase()),
-              ),
-          )) {
-            const key = connection.id + ":" + found.merchantKey;
-            const existing = await db
-              .prepare(
-                "SELECT * FROM subscriptions WHERE user_id=? AND merchant_key=?",
-              )
-              .get(connection.user_id, key);
-            const age = (Date.now() - Date.parse(found.nextDate)) / 86400000;
-            const status =
-              age > (found.cadence === "monthly" ? 45 : 180)
-                ? "needs_review"
-                : "active";
-            if (existing) {
-              if (existing.status !== "cancelled")
-                await db
-                  .prepare(
-                    "UPDATE subscriptions SET amount=?,cadence=?,next_date=?,confidence=? WHERE id=?",
-                  )
-                  .run(
-                    found.amount,
-                    found.cadence,
-                    found.nextDate,
-                    found.confidence,
-                    existing.id,
-                  );
-            } else
-              await db
-                .prepare(
-                  "INSERT INTO subscriptions(id,user_id,name,amount,cadence,next_date,category,payment,status,source,merchant_key,confidence,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                )
-                .run(
-                  randomUUID(),
-                  connection.user_id,
-                  found.name,
-                  found.amount,
-                  found.cadence,
-                  found.nextDate,
-                  found.category,
-                  connection.channel === "card" ? "Card" : "UPI",
-                  status,
-                  connection.channel,
-                  key,
-                  found.confidence,
-                  new Date().toISOString(),
-                );
-          }
-        }
-        for (const stream of event.recurring) {
-          const service = identify(stream.merchant);
-          const streamKey = connection.id + ":stream:" + stream.id;
-          const inferredKey =
-            connection.id +
-            ":" +
-            (service?.id ||
-              stream.merchant.toLowerCase().replace(/[^a-z]/g, ""));
-          // Preserve subscription identity and its cancellation authorization when an inferred stream becomes authoritative.
-          await db
-            .prepare(
-              "UPDATE subscriptions SET merchant_key=? WHERE user_id=? AND merchant_key=? AND NOT EXISTS (SELECT 1 FROM subscriptions WHERE user_id=? AND merchant_key=?)",
-            )
-            .run(
-              streamKey,
-              connection.user_id,
-              inferredKey,
-              connection.user_id,
-              streamKey,
-            );
-          await db
-            .prepare(
-              "DELETE FROM subscriptions WHERE user_id=? AND merchant_key=? AND NOT EXISTS (SELECT 1 FROM cancellation_jobs WHERE cancellation_jobs.subscription_id=subscriptions.id)",
-            )
-            .run(connection.user_id, inferredKey);
-          await db
-            .prepare(
-              "INSERT INTO subscriptions(id,user_id,name,amount,cadence,next_date,category,payment,status,source,merchant_key,confidence,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(user_id,merchant_key) WHERE merchant_key IS NOT NULL DO UPDATE SET name=excluded.name,amount=excluded.amount,cadence=excluded.cadence,next_date=excluded.next_date,status=excluded.status,confidence=excluded.confidence",
-            )
-            .run(
-              randomUUID(),
-              connection.user_id,
-              service?.name || stream.merchant,
-              stream.amount,
-              stream.cadence,
-              stream.nextDate,
-              service?.category || "Other",
-              connection.channel === "card" ? "Card" : "UPI",
-              stream.status,
-              connection.channel,
-              streamKey,
-              1,
-              new Date().toISOString(),
-            );
-        }
-        await db
-          .prepare("INSERT INTO financial_events VALUES(?,?)")
-          .run(event.id, new Date().toISOString());
-        await audit(
-          connection.user_id,
-          "connection." + event.status,
-          `${connection.channel}: ${added} new transactions`,
-        );
-        await reconcileCancellationStates();
-        await db.exec("COMMIT");
-        res.json({
-          ok: true,
-          added,
-        });
-      } catch (e) {
-        await db.exec("ROLLBACK");
-        throw e;
-      }
+      res.json(await ingestFinancialEvent(event, connection));
     },
   );
 }
@@ -291,56 +139,162 @@ export function registerConnectionRoutes(app, { auth, paid, origin }) {
       })
       .strict()
       .parse(req.body);
-    if (!connectorAvailable(channel))
-      return res.status(503).json({
-        error: `${channel === "card" ? "Card transaction" : "UPI"} connection is not available yet. An approved provider must be configured before automatic tracking can start.`,
-      });
-    const base = new URL(process.env.FINANCIAL_CONNECTOR_URL);
-    if (base.protocol !== "https:")
-      return res.status(503).json({
-        error: "The financial connector requires HTTPS",
-      });
-    const id = randomUUID();
-    await db
-      .prepare("INSERT INTO connections VALUES(?,?,?,?,?,?)")
-      .run(id, req.user.id, channel, "pending", null, new Date().toISOString());
-    try {
-      const result = await fetch(new URL("/sessions", base), {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + process.env.FINANCIAL_CONNECTOR_SECRET,
-          "Content-Type": "application/json",
-          "Idempotency-Key": id,
-        },
-        body: JSON.stringify({
-          connectionId: id,
-          subject: createHash("sha256").update(req.user.id).digest("hex"),
-          channel,
-          returnUrl: origin + "/?connection_return=1",
-        }),
-        signal: AbortSignal.timeout(20000),
-      });
-      if (!result.ok) throw Error("Provider session failed");
-      const output = await result.json(),
-        url = new URL(output.authorizationUrl);
-      const allowed = (process.env.FINANCIAL_AUTH_ORIGINS || base.origin)
-        .split(",")
-        .map((x) => x.trim());
-      if (url.protocol !== "https:" || !allowed.includes(url.origin))
-        throw Error("Provider returned an unapproved authorization origin");
-      await audit(req.user.id, "connection.started", channel);
-      res.status(201).json({
-        id,
-        authorizationUrl: url.href,
-      });
-    } catch {
-      await db
-        .prepare("UPDATE connections SET status='error' WHERE id=?")
-        .run(id);
-      res.status(502).json({
+    return res
+      .status(410)
+      .json({
         error:
-          "The connection provider is unavailable. Please try again later.",
+          "Separate card and UPI connections have been removed. Use the bank connection in Accounts.",
       });
-    }
   });
+}
+
+// Shared ingestion for authenticated adapters; HTTP webhook validation remains above.
+export async function ingestFinancialEvent(event, connection) {
+  await db.exec("BEGIN IMMEDIATE");
+  try {
+    let added = 0;
+    for (const t of event.transactions)
+      added += Number(
+        (
+          await db
+            .prepare(
+              "INSERT OR IGNORE INTO provider_transactions VALUES(?,?,?,?,?,?)",
+            )
+            .run(connection.id, t.id, t.merchant, t.amount, t.date, t.currency)
+        ).changes,
+      );
+    await db
+      .prepare("UPDATE connections SET status=?,last_sync=? WHERE id=?")
+      .run(event.status, new Date().toISOString(), connection.id);
+    if (event.status === "connected") {
+      const all = await db
+        .prepare(
+          "SELECT merchant,amount,date FROM provider_transactions WHERE connection_id=?",
+        )
+        .all(connection.id);
+      for (const found of detectRecurring(all).filter(
+        (r) =>
+          ["monthly", "yearly"].includes(r.cadence) &&
+          !event.recurring.some(
+            (stream) =>
+              (identify(stream.merchant)?.id ||
+                stream.merchant.toLowerCase()) ===
+              (identify(r.name)?.id || r.name.toLowerCase()),
+          ),
+      )) {
+        const key = connection.id + ":" + found.merchantKey;
+        const existing = await db
+          .prepare(
+            "SELECT * FROM subscriptions WHERE user_id=? AND merchant_key=?",
+          )
+          .get(connection.user_id, key);
+        const age = (Date.now() - Date.parse(found.nextDate)) / 86400000;
+        const status =
+          age > (found.cadence === "monthly" ? 45 : 180)
+            ? "needs_review"
+            : "active";
+        if (existing) {
+          if (existing.status !== "cancelled")
+            await db
+              .prepare(
+                "UPDATE subscriptions SET amount=?,cadence=?,next_date=?,confidence=? WHERE id=?",
+              )
+              .run(
+                found.amount,
+                found.cadence,
+                found.nextDate,
+                found.confidence,
+                existing.id,
+              );
+        } else
+          await db
+            .prepare(
+              "INSERT INTO subscriptions(id,user_id,name,amount,cadence,next_date,category,payment,status,source,merchant_key,confidence,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            )
+            .run(
+              randomUUID(),
+              connection.user_id,
+              found.name,
+              found.amount,
+              found.cadence,
+              found.nextDate,
+              found.category,
+              connection.channel === "bank"
+                ? "Bank · sandbox"
+                : connection.channel === "card"
+                  ? "Card"
+                  : "UPI",
+              status,
+              connection.channel === "bank"
+                ? "setu_sandbox"
+                : connection.channel,
+              key,
+              found.confidence,
+              new Date().toISOString(),
+            );
+      }
+    }
+    for (const stream of event.recurring) {
+      const service = identify(stream.merchant);
+      const streamKey = connection.id + ":stream:" + stream.id;
+      const inferredKey =
+        connection.id +
+        ":" +
+        (service?.id || stream.merchant.toLowerCase().replace(/[^a-z]/g, ""));
+      // Preserve subscription identity and its cancellation authorization when an inferred stream becomes authoritative.
+      await db
+        .prepare(
+          "UPDATE subscriptions SET merchant_key=? WHERE user_id=? AND merchant_key=? AND NOT EXISTS (SELECT 1 FROM subscriptions WHERE user_id=? AND merchant_key=?)",
+        )
+        .run(
+          streamKey,
+          connection.user_id,
+          inferredKey,
+          connection.user_id,
+          streamKey,
+        );
+      await db
+        .prepare(
+          "DELETE FROM subscriptions WHERE user_id=? AND merchant_key=? AND NOT EXISTS (SELECT 1 FROM cancellation_jobs WHERE cancellation_jobs.subscription_id=subscriptions.id)",
+        )
+        .run(connection.user_id, inferredKey);
+      await db
+        .prepare(
+          "INSERT INTO subscriptions(id,user_id,name,amount,cadence,next_date,category,payment,status,source,merchant_key,confidence,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(user_id,merchant_key) WHERE merchant_key IS NOT NULL DO UPDATE SET name=excluded.name,amount=excluded.amount,cadence=excluded.cadence,next_date=excluded.next_date,status=excluded.status,confidence=excluded.confidence",
+        )
+        .run(
+          randomUUID(),
+          connection.user_id,
+          service?.name || stream.merchant,
+          stream.amount,
+          stream.cadence,
+          stream.nextDate,
+          service?.category || "Other",
+          connection.channel === "bank"
+            ? "Bank · sandbox"
+            : connection.channel === "card"
+              ? "Card"
+              : "UPI",
+          stream.status,
+          connection.channel === "bank" ? "setu_sandbox" : connection.channel,
+          streamKey,
+          1,
+          new Date().toISOString(),
+        );
+    }
+    await db
+      .prepare("INSERT INTO financial_events VALUES(?,?)")
+      .run(event.id, new Date().toISOString());
+    await audit(
+      connection.user_id,
+      "connection." + event.status,
+      `${connection.channel}: ${added} new transactions`,
+    );
+    await reconcileCancellationStates();
+    await db.exec("COMMIT");
+    return { ok: true, added };
+  } catch (e) {
+    await db.exec("ROLLBACK");
+    throw e;
+  }
 }

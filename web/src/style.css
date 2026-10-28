@@ -4976,9 +4976,68 @@ html[data-theme="dark"] .cancellation-state > svg {
 }
 
 /* Membership gate uses the existing forest-green palette and restrained panels. */
-.plus-gate { max-width: 680px; margin: 28px auto; padding: clamp(28px, 6vw, 56px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.plus-gate-icon { display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid var(--line); border-radius: 50%; color: var(--green); }
-.plus-gate h2 { font-size: clamp(24px, 4vw, 32px); font-weight: 500; letter-spacing: -.025em; }
-.plus-gate p { max-width: 440px; line-height: 1.65; margin: 0; }
-.plus-gate small { max-width: 360px; line-height: 1.5; opacity: .7; }
-@media (max-width: 600px) { .plus-gate { margin: 12px 0; } .plus-gate .primary { width: 100%; justify-content: center; } }
+.plus-gate {
+  max-width: 680px;
+  margin: 28px auto;
+  padding: clamp(28px, 6vw, 56px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.plus-gate-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--green);
+}
+.plus-gate h2 {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+.plus-gate p {
+  max-width: 440px;
+  line-height: 1.65;
+  margin: 0;
+}
+.plus-gate small {
+  max-width: 360px;
+  line-height: 1.5;
+  opacity: 0.7;
+}
+@media (max-width: 600px) {
+  .plus-gate {
+    margin: 12px 0;
+  }
+  .plus-gate .primary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+.setu-sandbox {
+  grid-column: 1 / -1;
+}
+.setu-sandbox .sectiontitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.setu-sandbox .setu-connection {
+  border-top: 1px solid var(--border, #dce2dc);
+  padding: 16px 0;
+  margin-top: 8px;
+}
+.setu-sandbox .wide {
+  margin: 12px 0;
+}
+.setu-sandbox > small {
+  display: block;
+  line-height: 1.6;
+}

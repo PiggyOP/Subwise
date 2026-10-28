@@ -22,6 +22,12 @@ import { db, audit, subscriptions, databaseMiddleware } from "./db.js";
 import { catalog } from "./catalog.js";
 import { complimentaryPlus, membershipStatus } from "./membership.js";
 import { registerProfileRoutes } from "./profile.js";
+import {
+  registerSetuWebhook,
+  registerSetuRoutes,
+  setuAllowed,
+  startSetuWorker,
+} from "./setu.js";
 import { startEmailWorker } from "./email.js";
 import {
   cancellationDetails,
@@ -123,6 +129,7 @@ app.post(
   },
 );
 registerFinancialWebhook(app);
+registerSetuWebhook(app);
 registerCancellationWebhook(app);
 app.use(
   express.json({
@@ -347,6 +354,7 @@ app.get("/api/dashboard", auth, async (req, res) =>
       },
       paidGate: !testPlus && process.env.REQUIRE_PAID_PLAN === "true",
       testPlus,
+      setu: { available: setuAllowed(req.user), sandbox: true },
     },
   }),
 );
@@ -362,6 +370,7 @@ registerConnectionRoutes(app, {
   paid,
   origin,
 });
+registerSetuRoutes(app, { auth, paid, origin });
 registerCancellationRoutes(app, {
   auth,
   paid,
@@ -719,6 +728,7 @@ export { app };
 if (!process.env.SUBWISE_SERVERLESS) {
   const stopEmailWorker = startEmailWorker();
   const stopCancellationWorker = startCancellationWorker();
+  const stopSetuWorker = startSetuWorker();
   const server = app.listen(Number(process.env.PORT) || 3001, "0.0.0.0", () =>
     console.log("Subwise API on port " + (process.env.PORT || 3001)),
   );
@@ -726,6 +736,7 @@ if (!process.env.SUBWISE_SERVERLESS) {
     server.close(async () => {
       stopEmailWorker();
       stopCancellationWorker();
+      stopSetuWorker();
       await db.close();
       process.exit(0);
     }),

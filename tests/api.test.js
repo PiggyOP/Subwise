@@ -134,7 +134,7 @@ test("authenticated connected-only API, account isolation, test Plus and session
   assert.equal((await request("/api/billing/checkout", {}, token)).status, 409);
   assert.equal(
     (await request("/api/connections", { channel: "card" }, token)).status,
-    503,
+    410,
   );
   assert.equal(
     (

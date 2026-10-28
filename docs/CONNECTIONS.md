@@ -1,10 +1,10 @@
-# Automatic card and UPI connections
+# Financial connection adapters
 
 The product has no manual creation or statement-upload path. Public `POST /api/subscriptions` and `POST /api/import` return 410. Detected prices, cadence and merchant names cannot be edited through the public PATCH route. Only active/review tracking status is editable. Manual cancelled/requested status changes are rejected; see `CANCELLATION.md` for provider-confirmed execution.
 
 ## Actual integration status
 
-There is **no approved financial provider connected**. The delivered connector is a Subwise-owned adapter contract, not an implementation of Setu, a bank, a card network, PhonePe, Google Pay or NPCI's private APIs. It cannot be pointed directly at an arbitrary provider API and be expected to work. A contracted, authorized server-side adapter must implement the contract below using that provider's real APIs and approved scopes.
+There is **no production financial provider connected**. A separate [Setu AA sandbox adapter](./SETU-SANDBOX.md) now supports an explicitly allowlisted test account with provider-returned sample bank data. The generic card/UPI connector below is still a Subwise-owned adapter contract, not a bank, card-network, PhonePe, Google Pay or NPCI integration. It cannot be pointed directly at an arbitrary provider API and be expected to work. A contracted, authorized server-side adapter must implement that contract using the provider's real APIs and approved scopes.
 
 Card-number collection and UPI-ID collection do not grant transaction access, so neither form exists. Authorization happens on the supported provider's screen. Neither a test Plus membership nor sample data unlocks real financial access.
 
@@ -20,7 +20,9 @@ Never enable a channel unless your adapter and provider actually support that us
 
 ## Start authorization
 
-The signed-in web/native client posts `{ "channel": "card" }` or `{ "channel": "upi" }` to `/api/connections`. The server creates a pending connection and calls:
+Separate card and UPI connection creation has been removed: `/api/connections` now returns HTTP 410 after authentication and entitlement checks. The old contract below is retained only as integration documentation; existing feed ingestion remains compatible. The active bank sandbox uses `/api/setu/connections` instead.
+
+The legacy adapter session contract was:
 
 ```http
 POST https://YOUR_ADAPTER/sessions

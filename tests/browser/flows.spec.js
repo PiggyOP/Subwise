@@ -21,23 +21,23 @@ test("sample dashboard uses real logos, supports monthly/yearly and exposes conn
   await page.getByRole("button", { name: "Accounts", exact: true }).click();
   await expect(
     page.getByRole("heading", {
-      name: "Your card. Your UPI. One clear picture.",
+      name: "Your bank. One clear picture.",
     }),
   ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Connect your card", exact: true })
-    .click();
   await expect(
-    page
-      .getByRole("dialog")
-      .getByRole("button", { name: "Continue to secure provider" }),
-  ).toBeDisabled();
+    page.getByRole("button", { name: "Connect your card", exact: true }),
+  ).toHaveCount(0);
   await expect(
-    page
-      .getByRole("dialog")
-      .getByText("No approved provider is connected yet.", { exact: false }),
+    page.getByRole("button", { name: "Connect UPI", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Bank connection", exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Close dialog" }).click();
+  await expect(
+    page.getByText("Real bank connections are not available yet.", {
+      exact: false,
+    }),
+  ).toBeVisible();
   expect(errors).toEqual([]);
 });
 test("120-service catalog has working local brand assets, search and category filters", async ({
@@ -97,7 +97,7 @@ test("phone registration requires Plus and has no free testing bypass", async ({
     page.getByRole("button", { name: "Import statement", exact: true }),
   ).toHaveCount(0);
   await expect(
-    page.getByRole("button", { name: "Connect card or UPI", exact: true }),
+    page.getByRole("button", { name: "Connect bank", exact: true }),
   ).toHaveCount(0);
   await page.reload();
   await page.locator(".mobile-menu").click();
