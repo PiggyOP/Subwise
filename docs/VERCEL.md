@@ -4,7 +4,7 @@ The website and Express API run on Vercel at `https://piggyop-subwise.vercel.app
 
 ## Runtime
 
-`vercel.json` builds the Vite frontend and routes `/api/*` to `api/index.js`. The adapter passes the original Node request stream to Express, preserving signed webhook bytes. The API runs in Singapore (`sin1`) and uses the existing isolated PostgreSQL transaction contexts. Long-running process timers are disabled.
+`vercel.json` builds the Vite frontend and routes `/api/*` to `api/index.js`. The adapter passes the original Node request stream to Express, preserving signed webhook bytes. The API is pinned to Mumbai, India (`bom1`) and uses the existing isolated PostgreSQL transaction contexts. Setu support confirmed that non-Indian source IPs receive HTTP 403, so do not deploy the API in a foreign region or configure foreign failover regions. The CDN region shown for a browser request is not evidence of the function's outbound location; verify a deployed Setu call after a region change. Long-running process timers are disabled.
 
 Production-only server variables:
 
@@ -30,6 +30,8 @@ Verify health, login with the existing account, Plus access, profile reads, cata
 
 Keep the Netlify API paths available for existing external callbacks until provider settings have been migrated. Browser pages on the old Netlify URL can redirect to Vercel. External Setu Bridge callbacks still require the correct provider dashboard configuration; the Beeceptor sandbox callback is not automatically updated by changing web hosts.
 
-The initial live Vercel sandbox check also returned Setu's hosting-server rejection (HTTP 502 from Subwise wrapping the provider's HTTP 403). Changing hosts did not resolve the provider access issue; no bank transactions were imported during this migration.
+The initial Singapore deployment returned Setu's hosting-server rejection (HTTP 502 from Subwise wrapping the provider's HTTP 403). On 29 October 2026, Setu support confirmed in ticket 142457 that requests must originate from Indian IPs. This requires the Mumbai function region, rather than a host change alone. Sandbox consent and data retrieval must still be verified separately; a successful token request does not imply that a bank is connected.
+
+The Mumbai production deployment and project default are both `bom1`. The post-deployment check returned a sandbox authorization URL on `fiu-uat.setu.co`, with a pending consent and no recorded provider error; the user confirmed that the flow opened successfully. Bank linking and financial-data import remain separate steps.
 
 Rollback means removing the website redirect and unsetting `SUBWISE_WORKER_ORIGIN` in Netlify. This restores its original API/scheduler execution against the same Neon database without rolling back user data. Avoid running two independent schedulers for the same queue.

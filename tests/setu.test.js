@@ -144,7 +144,7 @@ test("authenticated sandbox transport refreshes a rejected token and never follo
     env: process.env,
     fetchImpl: async (url, options) => {
       assert.equal(options.redirect, "error");
-      if (url.includes("orgservice")) {
+      if (url.startsWith("https://orgservice-prod.setu.co/v1/users/login")) {
         logins++;
         assert.equal(JSON.parse(options.body).secret, "test-secret");
         return new Response(JSON.stringify({ access_token: "test-token" }));
@@ -162,7 +162,7 @@ test("authenticated sandbox transport refreshes a rejected token and never follo
   let posts = 0;
   const failed = makeSetuClient({
     fetchImpl: async (url) => {
-      if (url.includes("orgservice"))
+      if (url.startsWith("https://orgservice-prod.setu.co/v1/users/login"))
         return new Response('{"access_token":"token"}');
       posts++;
       throw new Error("timeout");
