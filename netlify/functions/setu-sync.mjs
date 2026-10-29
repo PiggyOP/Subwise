@@ -1,5 +1,7 @@
+import { forwardMaintenance } from "../../server/forward-maintenance.js";
 export const config = { schedule: "*/5 * * * *" };
 export default async function () {
+  if (await forwardMaintenance("setu")) return;
   if (
     process.env.SETU_SANDBOX_ENABLED !== "true" ||
     !process.env.SETU_CLIENT_SECRET

@@ -30,4 +30,7 @@ service-account*.json
 /provider-onboarding.txt
 # Local deployment metadata and temporary migration tools.
 .netlify/
+.vercel/
 work/
+.vercel
+.env*

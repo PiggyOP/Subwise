@@ -19,8 +19,9 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
+  to = "https://piggyop-subwise.vercel.app/:splat"
+  status = 302
+  force = true
 
 [[headers]]
   for = "/*"

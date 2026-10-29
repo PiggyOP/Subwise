@@ -1,6 +1,8 @@
 // Leave the database asleep while no cancellation provider is configured.
+import { forwardMaintenance } from "../../server/forward-maintenance.js";
 export const config = { schedule: "*/5 * * * *" };
 export default async function () {
+  if (await forwardMaintenance("cancellations")) return;
   if (
     !process.env.CANCELLATION_CONNECTOR_URL ||
     !process.env.CANCELLATION_CONNECTOR_SECRET ||

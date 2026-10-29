@@ -61,7 +61,7 @@ GitHub Actions runs the web/backend checks and browser flows. Native builds are 
 
 ## Deploy the full website
 
-For Netlify with persistent PostgreSQL storage, follow [the Netlify deployment guide](docs/NETLIFY.md). The included API and scheduled functions retain data in PostgreSQL rather than the function filesystem. Local SQLite deployment remains supported as described below.
+For the Vercel website and existing Neon database, follow [the Vercel deployment guide](docs/VERCEL.md). The five-minute scheduler remains on Netlify during migration; [the Netlify guide](docs/NETLIFY.md) documents its original deployment and rollback. Local SQLite deployment remains supported as described below.
 
 This project includes an authenticated Node backend. **Uploading the repository to GitHub does not deploy a running website.** GitHub Pages alone cannot run the backend, SQLite storage, provider webhooks or scheduled jobs.
 
