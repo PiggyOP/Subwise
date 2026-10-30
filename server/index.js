@@ -303,7 +303,7 @@ app.get("/api/dashboard", auth, async (req, res) =>
     access: await entitled(req.user.id),
     connections: await db
       .prepare(
-        "SELECT id,channel,status,last_sync FROM connections WHERE user_id=?",
+        "SELECT id,channel,status,last_sync FROM connections WHERE user_id=? AND channel!='demo_bank'",
       )
       .all(req.user.id),
     subscriptions: (await entitled(req.user.id))
@@ -317,14 +317,14 @@ app.get("/api/dashboard", auth, async (req, res) =>
     transactions: (await entitled(req.user.id))
       ? await db
           .prepare(
-            "SELECT p.merchant,p.amount,p.date,c.channel FROM provider_transactions p JOIN connections c ON p.connection_id=c.id WHERE c.user_id=? ORDER BY p.date DESC LIMIT 100",
+            "SELECT p.merchant,p.amount,p.date,c.channel FROM provider_transactions p JOIN connections c ON p.connection_id=c.id WHERE c.user_id=? AND c.channel!='demo_bank' ORDER BY p.date DESC LIMIT 100",
           )
           .all(req.user.id)
       : [],
     audit: (await entitled(req.user.id))
       ? await db
           .prepare(
-            "SELECT action,subject,created FROM audit WHERE user_id=? ORDER BY created DESC LIMIT 50",
+            "SELECT action,subject,created FROM audit WHERE user_id=? AND (subject IS NULL OR subject NOT LIKE 'demo_bank:%') ORDER BY created DESC LIMIT 50",
           )
           .all(req.user.id)
       : [],
@@ -667,7 +667,7 @@ app.get("/api/export", auth, async (req, res) =>
     subscriptions: await subscriptions(req.user.id),
     transactions: await db
       .prepare(
-        "SELECT p.merchant,p.amount,p.date,c.channel FROM provider_transactions p JOIN connections c ON p.connection_id=c.id WHERE c.user_id=?",
+        "SELECT p.merchant,p.amount,p.date,c.channel FROM provider_transactions p JOIN connections c ON p.connection_id=c.id WHERE c.user_id=? AND c.channel!='demo_bank'",
       )
       .all(req.user.id),
   }),

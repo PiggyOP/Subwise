@@ -63,6 +63,23 @@ test("authenticated connected-only API, account isolation, test Plus and session
     });
   assert.equal(a.status, 201);
   const token = a.data.token;
+  const legacyDemo = randomUUID();
+  db.prepare("INSERT INTO connections VALUES(?,?,?,?,?,?)").run(
+    legacyDemo,
+    a.data.user.id,
+    "demo_bank",
+    "connected",
+    null,
+    new Date().toISOString(),
+  );
+  db.prepare("INSERT INTO provider_transactions VALUES(?,?,?,?,?,?)").run(
+    legacyDemo,
+    "legacy-demo-row",
+    "Legacy synthetic purchase",
+    64900,
+    "2026-10-05",
+    "INR",
+  );
   const id = randomUUID();
   db.prepare(
     "INSERT INTO subscriptions(id,user_id,name,amount,cadence,next_date,category,payment,status,source,created) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
@@ -128,6 +145,10 @@ test("authenticated connected-only API, account isolation, test Plus and session
     409,
   );
   const dash = await request("/api/dashboard", null, token);
+  assert.deepEqual(dash.data.connections, []);
+  assert.deepEqual(dash.data.transactions, []);
+  assert.deepEqual((await request("/api/connections", null, token)).data, []);
+  assert.equal((await request("/api/demo-bank", null, token)).status, 404);
   assert.equal(dash.data.subscriptions.length, 1);
   assert.equal(dash.data.billing.status, "active");
   assert.equal(dash.data.integrations.testPlus, true);

@@ -127,7 +127,7 @@ export function registerConnectionRoutes(app, { auth, paid, origin }) {
     res.json(
       await db
         .prepare(
-          "SELECT id,channel,status,last_sync,created FROM connections WHERE user_id=? ORDER BY created DESC",
+          "SELECT id,channel,status,last_sync,created FROM connections WHERE user_id=? AND channel!='demo_bank' ORDER BY created DESC",
         )
         .all(req.user.id),
     ),

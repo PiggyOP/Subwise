@@ -33,4 +33,17 @@ The earlier Postman Cloud Agent calls returned generic HTML 403 responses. Direc
 
 Reference: [Quickstart](https://docs.setu.co/data/account-aggregator/quickstart), [consent flow](https://docs.setu.co/data/account-aggregator/api-integration/consent-flow), [data flow](https://docs.setu.co/data/account-aggregator/api-integration/data-apis), [notifications](https://docs.setu.co/data/account-aggregator/api-integration/notifications), [OpenAPI](https://docs.setu.co/api-specs/data/account-aggregator.json).
 
-Hosted verification: Netlify's request to `orgservice-prod.setu.co` returned HTTP 403 with a non-JSON response, while the same token request succeeds from the development computer. No consent has been created through the hosted backend and no bank transactions have been retrieved end to end. The Bridge callback still points to Beeceptor pending configuration; polling works independently. Provider approval of the hosting egress or a supported backend location is required before calling the hosted flow verified.
+Hosted verification (updated 30 October 2026): Setu support confirmed that its API accepts Indian source IPs only. Moving the Vercel API to Mumbai (`bom1`) resolved HTTP 403; hosted consent creation now succeeds. This verifies API connectivity, not completed bank linking or transaction retrieval. The Bridge test callback still points to Beeceptor pending configuration; polling works independently.
+
+### Actual Setu test identity remains required
+
+The user requires a Setu-hosted test-number/OTP flow without a personal phone. The separate Subwise simulator was reverted and its legacy rows are excluded from workspace reads; they must not be presented as Setu results.
+
+Fresh provider checks on 30 October 2026:
+
+- Token API and `GET /v2/fips?status=ACTIVE` return HTTP 200. Both `setu-fip` and `setu-fip-2` are ACTIVE.
+- The old documented example `9999999999@setu-aa` returns HTTP 400 `InvalidRequest`: entity handle `setu-aa` is not supported. Trace `1-6ae4791f-4d24d664227bf6470984594e`.
+- The currently documented `9999999999@setu` returns HTTP 500 `UpstreamInternalServerError`. Trace `1-6ae47938-5e0abbf70dea85e226688531`.
+- The unsuffixed example routes to a partner AA login. A dummy number is not proof of a provisioned login. The current guide's static `123456` applies to Setu FIP-2 bank linking; do not claim it also authenticates the partner AA login.
+
+Support must confirm the exact provisioned dummy VUA, AA handle, AA login OTP and mock FIP linking details or repair the Setu AA route. Custom statement data must be enabled on the provider's mock FIP; app-inserted subscriptions do not verify this integration. No end-to-end financial-data fetch has been verified yet.
