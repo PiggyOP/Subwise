@@ -42,7 +42,7 @@ export async function audit(userId, action, subject) {
 export async function subscriptions(userId) {
   return await db
     .prepare(
-      "SELECT * FROM subscriptions WHERE user_id=? AND source IN ('card','upi','setu_sandbox') ORDER BY next_date",
+      "SELECT * FROM subscriptions WHERE user_id=? AND source IN ('card','upi','setu_sandbox','demo_bank') ORDER BY next_date",
     )
     .all(userId);
 }

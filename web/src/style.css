@@ -5041,3 +5041,75 @@ html[data-theme="dark"] .cancellation-state > svg {
   display: block;
   line-height: 1.6;
 }
+.demo-bank,
+.accountsgrid > details {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+}
+.demo-bank-form,
+.demo-bank-results {
+  width: 100%;
+}
+.demo-bank-form {
+  max-width: 620px;
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 24px;
+}
+.demo-bank-form label {
+  font-weight: 600;
+}
+.demo-bank-form small {
+  line-height: 1.7;
+}
+.demo-bank-results {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+}
+.demo-bank .sectiontitle {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.demo-bank h3 {
+  font-size: 17px;
+  margin: 12px 0;
+}
+.demo-findings {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+}
+.demo-findings li {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  gap: 8px;
+}
+.demo-findings small {
+  color: var(--muted);
+}
+.demo-bank details {
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+}
+.demo-bank summary,
+.accountsgrid > details > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.demo-bank .tablewrap {
+  max-height: 420px;
+  overflow: auto;
+}
+.demo-bank table {
+  min-width: 660px;
+}
+.demo-bank select {
+  max-width: 100%;
+}

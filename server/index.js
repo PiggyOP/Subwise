@@ -29,6 +29,7 @@ import {
   startSetuWorker,
 } from "./setu.js";
 import { startEmailWorker } from "./email.js";
+import { demoBankAllowed, registerDemoBankRoutes } from "./demo-bank.js";
 import {
   cancellationDetails,
   cancellationInProgress,
@@ -355,6 +356,7 @@ app.get("/api/dashboard", auth, async (req, res) =>
       paidGate: !testPlus && process.env.REQUIRE_PAID_PLAN === "true",
       testPlus,
       setu: { available: setuAllowed(req.user), sandbox: true },
+      demoBank: { available: demoBankAllowed(req.user), synthetic: true },
     },
   }),
 );
@@ -371,6 +373,7 @@ registerConnectionRoutes(app, {
   origin,
 });
 registerSetuRoutes(app, { auth, paid, origin });
+registerDemoBankRoutes(app, { auth, paid });
 registerCancellationRoutes(app, {
   auth,
   paid,
