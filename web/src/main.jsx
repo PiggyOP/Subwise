@@ -35,7 +35,6 @@ import "./style.css";
 import Profile from "./Profile";
 import Cancellation from "./Cancellation";
 import SetuSandbox from "./SetuSandbox";
-import DemoBank from "./DemoBank";
 import { ThemeProvider, ThemeToggle } from "./theme";
 const money = (n) =>
   new Intl.NumberFormat("en-IN", {
@@ -422,19 +421,7 @@ function App() {
               </button>
             </div>
           )}
-          {data.connections?.some((c) => c.channel === "demo_bank") && (
-            <div className="notice" role="status">
-              <ShieldCheck size={18} />
-              <p>
-                Demo bank · Statements, autopay records, subscriptions and
-                spending totals are synthetic. No real bank or Setu data was
-                used for this demo.
-              </p>
-            </div>
-          )}
-          {data.connections?.some(
-            (c) => c.channel === "bank" && c.status === "connected",
-          ) && (
+          {data.connections?.some((c) => c.channel === "bank") && (
             <div className="notice" role="status">
               <ShieldCheck size={18} />
               <p>
@@ -559,13 +546,9 @@ function App() {
                               <div>
                                 <b>{s.name}</b>
                                 <small>
-                                  {s.source === "demo_bank"
-                                    ? "Demo bank · synthetic"
-                                    : s.source === "setu_sandbox"
-                                      ? "Setu sandbox"
-                                      : s.source === "upi"
-                                        ? "Detected via UPI"
-                                        : "Detected via card"}
+                                  {s.source === "upi"
+                                    ? "Detected via UPI"
+                                    : "Detected via card"}
                                 </small>
                               </div>
                             </div>
@@ -970,11 +953,8 @@ function App() {
                   </p>
                   <span className="status cancellation_requested">
                     <i />
-                    {data.connections?.some(
-                      (c) =>
-                        c.status === "connected" && c.channel !== "demo_bank",
-                    )
-                      ? `${data.connections.filter((c) => c.status === "connected" && c.channel !== "demo_bank").length} payment account(s) connected`
+                    {data.connections?.some((c) => c.status === "connected")
+                      ? `${data.connections.filter((c) => c.status === "connected").length} payment account(s) connected`
                       : "No payment accounts connected"}
                   </span>
                 </div>
@@ -1002,14 +982,8 @@ function App() {
                 </span>
               </div>
               <div className="accountsgrid">
-                {data.integrations.demoBank?.available && (
-                  <DemoBank api={api} refresh={refresh} notify={notify} />
-                )}
                 {data.integrations.setu?.available ? (
-                  <details className="panel accountcard">
-                    <summary>Optional: Setu provider sandbox</summary>
-                    <SetuSandbox api={api} refresh={refresh} notify={notify} />
-                  </details>
+                  <SetuSandbox api={api} refresh={refresh} notify={notify} />
                 ) : (
                   <section className="panel accountcard">
                     <Landmark size={29} />

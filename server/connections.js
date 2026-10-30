@@ -139,10 +139,12 @@ export function registerConnectionRoutes(app, { auth, paid, origin }) {
       })
       .strict()
       .parse(req.body);
-    return res.status(410).json({
-      error:
-        "Separate card and UPI connections have been removed. Use the bank connection in Accounts.",
-    });
+    return res
+      .status(410)
+      .json({
+        error:
+          "Separate card and UPI connections have been removed. Use the bank connection in Accounts.",
+      });
   });
 }
 
@@ -150,14 +152,6 @@ export function registerConnectionRoutes(app, { auth, paid, origin }) {
 export async function ingestFinancialEvent(event, connection) {
   await db.exec("BEGIN IMMEDIATE");
   try {
-    if (
-      await db
-        .prepare("SELECT id FROM financial_events WHERE id=?")
-        .get(event.id)
-    ) {
-      await db.exec("COMMIT");
-      return { ok: true, duplicate: true, added: 0 };
-    }
     let added = 0;
     for (const t of event.transactions)
       added += Number(
@@ -225,13 +219,11 @@ export async function ingestFinancialEvent(event, connection) {
               found.cadence,
               found.nextDate,
               found.category,
-              connection.channel === "demo_bank"
-                ? "Demo bank · synthetic"
-                : connection.channel === "bank"
-                  ? "Bank · sandbox"
-                  : connection.channel === "card"
-                    ? "Card"
-                    : "UPI",
+              connection.channel === "bank"
+                ? "Bank · sandbox"
+                : connection.channel === "card"
+                  ? "Card"
+                  : "UPI",
               status,
               connection.channel === "bank"
                 ? "setu_sandbox"
@@ -278,13 +270,11 @@ export async function ingestFinancialEvent(event, connection) {
           stream.cadence,
           stream.nextDate,
           service?.category || "Other",
-          connection.channel === "demo_bank"
-            ? "Demo bank · synthetic"
-            : connection.channel === "bank"
-              ? "Bank · sandbox"
-              : connection.channel === "card"
-                ? "Card"
-                : "UPI",
+          connection.channel === "bank"
+            ? "Bank · sandbox"
+            : connection.channel === "card"
+              ? "Card"
+              : "UPI",
           stream.status,
           connection.channel === "bank" ? "setu_sandbox" : connection.channel,
           streamKey,
