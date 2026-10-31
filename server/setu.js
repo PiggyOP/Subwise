@@ -282,8 +282,9 @@ export function registerSetuRoutes(app, { auth, paid, origin }) {
       })
       .strict()
       .parse(req.body);
+    const request = consentRequest(origin, new Date(), mobile);
     const customerKey = createHash("sha256")
-      .update(process.env.SETU_WEBHOOK_TOKEN + ":" + mobile)
+      .update(process.env.SETU_WEBHOOK_TOKEN + ":" + request.vua)
       .digest("hex");
     const pending = await db
       .prepare(
@@ -306,7 +307,6 @@ export function registerSetuRoutes(app, { auth, paid, origin }) {
         error: "A sandbox bank is already connected. Use Refresh sandbox data.",
       });
     try {
-      const request = consentRequest(origin, new Date(), mobile);
       const consent = await client.request("/v2/consents", request);
       const id = randomUUID(),
         consentId = opaqueId(consent.id),

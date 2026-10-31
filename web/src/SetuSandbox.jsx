@@ -4,7 +4,7 @@ import { Landmark, ArrowUpRight, RefreshCw, ExternalLink } from "lucide-react";
 export default function SetuSandbox({ api, refresh, notify }) {
   const [connections, setConnections] = useState([]),
     [busy, setBusy] = useState(false),
-    [mobile, setMobile] = useState(""),
+    [mobile, setMobile] = useState("9999999999"),
     [error, setError] = useState("");
   const load = () =>
     api("/setu/connections")
@@ -128,8 +128,9 @@ export default function SetuSandbox({ api, refresh, notify }) {
             pattern="[6-9][0-9]{9}"
           />
           <small className="muted">
-            Setu/Anumati may send an OTP to this number. Enter OTPs only on
-            their screen. Select a mock bank such as Setu FIP-2 for sample data.
+            Uses Setu’s Finvu test flow. Login OTP: 111111. Consent OTP:
+            123456. Enter these only on the provider’s test screen. Select
+            Setu FIP-2 for sample bank data; its linking OTP is 123456.
           </small>
           <button type="submit" className="primary wide" disabled={busy}>
             {busy ? "Connecting…" : "Connect Setu test bank"}

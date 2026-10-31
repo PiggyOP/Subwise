@@ -10,9 +10,9 @@ In Bridge, set the **test** callback URL to `https://<app-host>/api/webhooks/set
 
 ## User journey
 
-The allowlisted test account sees **Connect a test bank** in Accounts. The user enters a mobile number registered for sandbox testing. Subwise sends it to Setu for the consent journey and stores only a keyed digest to reuse the correct pending request. OTPs stay on the provider screen. A dummy number requires current provider-supplied login instructions; the old migration guide's `123456` OTP was rejected by the current Anumati login for `9999999999`.
+The allowlisted test account sees **Connect a test bank** in Accounts, prefilled with dummy number `9999999999`. Subwise explicitly routes to `9999999999@finvu` through Setu, and stores only a keyed digest of the full VUA to reuse the correct pending request. Including the AA handle prevents reuse of old OneMoney/Anumati requests. OTPs stay on the provider screen. Setu support ticket **143012** supplied Finvu UAT login OTP **111111** and consent OTP **123456** on 31 October 2026; these codes apply to this test flow, not production.
 
-The consent requests up to 89 days of history, DEPOSIT transactions only, purpose 102 (spending/budget analysis), STORE, one-month data life, daily maximum fetch frequency, and one-month consent duration. Explicit fields avoid relying on incomplete Bridge defaults. No AA handle is forced. Only Setu sandbox/UAT HTTPS authorization origins are accepted. Select mock FIPs, never real accounts, for sandbox testing.
+The consent requests up to 89 days of history, DEPOSIT transactions only, purpose 102 (spending/budget analysis), STORE, one-month data life, daily maximum fetch frequency, and one-month consent duration. Explicit fields avoid relying on incomplete Bridge defaults. The AA handle is explicitly Finvu, as directed by Setu support. Only Setu sandbox/UAT HTTPS authorization origins are accepted. Select mock FIPs, never real accounts, for sandbox testing.
 
 The user completes the provider's test login/account/consent flow. Returning to Subwise opens Accounts. The visible page checks progress at most once a minute; a scheduled job checks pending connections every five minutes. The server obtains a bearer token from Setu's token service, verifies consent with Setu, creates/reconciles the session, retrieves JSON and normalizes debit transaction amounts to integer paise. Provider account and transaction IDs namespace duplicate protection. Existing recurrence detection then runs on actual provider-returned sample transactions. No subscriptions are fabricated to fill an empty result.
 
@@ -35,7 +35,7 @@ Reference: [Quickstart](https://docs.setu.co/data/account-aggregator/quickstart)
 
 Hosted verification (updated 30 October 2026): Setu support confirmed that its API accepts Indian source IPs only. Moving the Vercel API to Mumbai (`bom1`) resolved HTTP 403; hosted consent creation now succeeds. This verifies API connectivity, not completed bank linking or transaction retrieval. The Bridge test callback still points to Beeceptor pending configuration; polling works independently.
 
-### Actual Setu test identity remains required
+### Provider identity troubleshooting history
 
 The user requires a Setu-hosted test-number/OTP flow without a personal phone. The separate Subwise simulator was reverted and its legacy rows are excluded from workspace reads; they must not be presented as Setu results.
 
@@ -46,4 +46,4 @@ Fresh provider checks on 30 October 2026:
 - The currently documented `9999999999@setu` returns HTTP 500 `UpstreamInternalServerError`. Trace `1-6ae47938-5e0abbf70dea85e226688531`.
 - The unsuffixed example routes to a partner AA login. A dummy number is not proof of a provisioned login. The current guide's static `123456` applies to Setu FIP-2 bank linking; do not claim it also authenticates the partner AA login.
 
-Support must confirm the exact provisioned dummy VUA, AA handle, AA login OTP and mock FIP linking details or repair the Setu AA route. Custom statement data must be enabled on the provider's mock FIP; app-inserted subscriptions do not verify this integration. No end-to-end financial-data fetch has been verified yet.
+On 31 October, Setu support supplied Finvu UAT OTPs (ticket 143012). A direct request for `9999999999@finvu` returned a PENDING consent and opened a Finvu login, replacing the unsupported/broken Setu handle and OneMoney PAN onboarding routes. Login, consent approval and data retrieval still need end-to-end verification. Custom statement data must be enabled on the provider's mock FIP; app-inserted subscriptions do not verify this integration.

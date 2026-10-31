@@ -126,7 +126,7 @@ test("sandbox access is explicit, account-scoped, and consent requests use appro
     new Date("2026-10-28T12:00:00Z"),
   );
   assert.equal(request.purpose.code, "102");
-  assert.equal(request.vua, "9999999999");
+  assert.equal(request.vua, "9999999999@finvu");
   assert.deepEqual(request.fiTypes, ["DEPOSIT"]);
   assert.deepEqual(request.consentTypes, ["TRANSACTIONS"]);
   assert.equal(request.frequency.unit, "DAY");

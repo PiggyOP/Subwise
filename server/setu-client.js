@@ -41,8 +41,9 @@ export function consentRequest(
 ) {
   const from = new Date(now.getTime() - 89 * 86400000);
   return {
-    // No forced AA handle: the product's sandbox gateway selects its configured AA.
-    vua: mobile,
+    // Setu support confirmed Finvu's UAT login and consent OTPs (ticket 143012).
+    // Explicit routing avoids the default OneMoney investment/PAN onboarding.
+    vua: mobile + "@finvu",
     consentDuration: { unit: "MONTH", value: 1 },
     dataRange: { from: from.toISOString(), to: now.toISOString() },
     purpose: {
