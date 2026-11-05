@@ -280,6 +280,55 @@ test("revoked consent blocks financial fetch and mismatched sessions never inges
     0,
   );
 });
+test("a denied mock account stops polling and allows a new test connection without ingesting data", async () => {
+  const row = await connection();
+  await syncSetuConnection(row, {
+    api: {
+      request: async (path) =>
+        path.includes("/consents/")
+          ? { id: row.consent_id, status: "ACTIVE" }
+          : {
+              id: row.session_id,
+              consentId: row.consent_id,
+              status: "FAILED",
+              fips: [
+                {
+                  fipID: "setu-fip-2",
+                  accounts: [{ FIstatus: "DENIED", data: null }],
+                },
+              ],
+            },
+    },
+  });
+  assert.equal(
+    (
+      await db
+        .prepare("SELECT status FROM connections WHERE id=?")
+        .get(row.connection_id)
+    ).status,
+    "failed",
+  );
+  assert.match(
+    (
+      await db
+        .prepare(
+          "SELECT last_error FROM setu_connections WHERE connection_id=?",
+        )
+        .get(row.connection_id)
+    ).last_error,
+    /normal sample account/,
+  );
+  assert.equal(
+    (
+      await db
+        .prepare(
+          "SELECT COUNT(*) AS n FROM provider_transactions WHERE connection_id=?",
+        )
+        .get(row.connection_id)
+    ).n,
+    0,
+  );
+});
 test("ambiguous data-session POST is reconciled without being submitted twice", async () => {
   const row = await connection({ session_id: null });
   let posts = 0;

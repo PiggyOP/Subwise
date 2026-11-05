@@ -30,6 +30,8 @@ if (
   await db.exec("ALTER TABLE setu_connections ADD COLUMN customer_key TEXT");
 
 function publicError(e) {
+  if (e instanceof SetuError && e.code === "DataSessionFAILED")
+    return "The mock bank could not share this account’s data. Start a new test connection and select a normal sample account, not one labelled FAILURE.";
   if (
     e instanceof SetuError &&
     e.status === 403 &&
@@ -155,8 +157,12 @@ export async function syncSetuConnection(row, { api = client } = {}) {
     const session = await api.request("/v2/sessions/" + opaqueId(sessionId));
     if (session.id !== sessionId || session.consentId !== row.consent_id)
       throw new SetuError(502, "SessionMismatch");
-    if (["FAILED", "EXPIRED"].includes(session.status))
+    if (["FAILED", "EXPIRED"].includes(session.status)) {
+      // A terminal data session cannot recover through polling. Let the tester
+      // start a new consent instead of leaving a failed fixture connected forever.
+      await retire(row, "failed");
       throw new SetuError(502, "DataSession" + session.status);
+    }
     if (!["PARTIAL", "COMPLETED"].includes(session.status)) return;
     const transactions = normalizeSetuTransactions(session).filter(
       (t) =>

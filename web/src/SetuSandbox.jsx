@@ -128,9 +128,10 @@ export default function SetuSandbox({ api, refresh, notify }) {
             pattern="[6-9][0-9]{9}"
           />
           <small className="muted">
-            Uses Setu’s Finvu test flow. Login OTP: 111111. Consent OTP:
-            123456. Enter these only on the provider’s test screen. Select
-            Setu FIP-2 for sample bank data; its linking OTP is 123456.
+            Uses Setu’s Finvu test flow. Login OTP: 111111. Consent OTP: 123456.
+            Enter these only on the provider’s test screen. Select Setu FIP-2
+            for sample bank data; its linking OTP is 123456. Choose a normal
+            sample account, not one labelled FAILURE.
           </small>
           <button type="submit" className="primary wide" disabled={busy}>
             {busy ? "Connecting…" : "Connect Setu test bank"}
